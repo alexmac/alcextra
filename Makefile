@@ -11,6 +11,10 @@ ENV=PATH=$(SDK)/usr/bin:$(INSTALL)/usr/bin:$(PATH) PKG_CONFIG_PATH=$(PKG_CONFIG_
 all:
 	mkdir -p $(BUILD)
 	mkdir -p $(INSTALL)
+
+	@if [ -d $(SDK)/usr/bin ] ; then true ; \
+		else echo "Couldn't locate Alchemy sdk directory, please invoke make with \"make SDK=/path/to/alchemy/sdk ...\"" ; exit 1 ; \
+	fi	
 	
 	make ncurses
 	make readline
@@ -18,6 +22,8 @@ all:
 	make libvorbis
 	make freetype
 	make sdlttf
+	make sdlmixer
+	make sdlimage
 	make physfs
 	make aalib
 
@@ -69,7 +75,7 @@ libogg:
 libvorbis:
 	rm -rf $(BUILD)/libvorbis
 	mkdir -p $(BUILD)/libvorbis
-	cd $(BUILD)/libvorbis && $(ENV) CC=gcc $(SRCROOT)/libvorbis-1.3.2/configure \
+	cd $(BUILD)/libvorbis && $(ENV) $(SRCROOT)/libvorbis-1.3.2/configure \
 		--host=$(TRIPLE) --prefix=$(INSTALL)/usr --disable-oggtest --disable-examples \
 		--disable-docs --enable-static --disable-shared
 	cd $(BUILD)/libvorbis && $(ENV) make -j$(THREADS) && PATH=$(SDK)/usr/bin:$(PATH) make install
@@ -77,36 +83,36 @@ libvorbis:
 sdlttf:
 	rm -rf $(BUILD)/sdlttf
 	mkdir -p $(BUILD)/sdlttf
-	cd $(BUILD)/sdlttf && $(ENV) CC=gcc CXX=g++ $(SRCROOT)/SDL_ttf-2.0.10/configure \
+	cd $(BUILD)/sdlttf && $(ENV) $(SRCROOT)/SDL_ttf-2.0.10/configure \
 		--build=$(TRIPLE) --prefix=$(INSTALL)/usr --with-freetype-prefix=$(INSTALL)/usr/ \
 		--disable-sdltest --disable-dependency-tracking --enable-static --disable-shared --without-x
-	cd $(BUILD)/sdlttf && $(ENV) CC=gcc CXX=g++ make -j$(THREADS) && make install
-	rm -f $(SDK)/usr/lib/libSDL_ttf.a
+	cd $(BUILD)/sdlttf && $(ENV) make -j$(THREADS) && make install
+	rm -f $(INSTALL)/usr/lib/libSDL_ttf.a
 	$(SDK)/usr/bin/ar crus $(INSTALL)/usr/lib/libSDL_ttf.a $(BUILD)/sdlttf/SDL_ttf.o
 
 sdlimage:
 	rm -rf $(BUILD)/sdlimage
 	mkdir -p $(BUILD)/sdlimage
-	cd $(BUILD)/sdlimage && $(ENV) CC=gcc CXX=g++ $(SRCROOT)/SDL_image-1.2.12/configure \
-		--build=$(TRIPLE) --prefix=$(SDK)/usr --with-freetype-prefix=$(INSTALL)/usr/ \
+	cd $(BUILD)/sdlimage && $(ENV) $(SRCROOT)/SDL_image-1.2.12/configure \
+		--build=$(TRIPLE) --prefix=$(INSTALL)/usr --with-freetype-prefix=$(INSTALL)/usr/ \
 		--disable-sdltest --disable-dependency-tracking --enable-static --disable-shared --without-x
-	cd $(BUILD)/sdlimage && $(ENV) CC=gcc CXX=g++ make -j$(THREADS) && make install
-	rm -f $(SDK)/usr/lib/libSDL_image.a
+	cd $(BUILD)/sdlimage && $(ENV) make -j$(THREADS) && make install
+	rm -f $(INSTALL)/usr/lib/libSDL_image.a
 	$(SDK)/usr/bin/ar crus $(INSTALL)/usr/lib/libSDL_image.a $(BUILD)/sdlimage/*.o
 
 sdlmixer:
 	rm -rf $(BUILD)/sdlmixer
 	mkdir -p $(BUILD)/sdlmixer
-	cd $(BUILD)/sdlmixer && $(ENV) CC=gcc CXX=g++ $(SRCROOT)/SDL_mixer-1.2.12/configure \
+	cd $(BUILD)/sdlmixer && $(ENV) $(SRCROOT)/SDL_mixer-1.2.12/configure \
 		--build=$(TRIPLE) --prefix=$(INSTALL)/usr --with-freetype-prefix=$(INSTALL)/usr/ \
 		--disable-sdltest --disable-dependency-tracking --enable-static --disable-shared --without-x
-	cd $(BUILD)/sdlmixer && $(ENV) CC=gcc CXX=g++ make -j$(THREADS) && make install
-	rm -f $(SDK)/usr/lib/libSDL_mixer.a
+	cd $(BUILD)/sdlmixer && $(ENV) make -j$(THREADS) && make install
+	rm -f $(INSTALL)/usr/lib/libSDL_mixer.a
 	$(SDK)/usr/bin/ar crus $(INSTALL)/usr/lib/libSDL_mixer.a $(BUILD)/sdlmixer/build/*.o
 
 freetype:
 	rm -rf $(BUILD)/freetype
 	mkdir -p $(BUILD)/freetype
-	cd $(BUILD)/freetype && $(ENV) CC=gcc CXX=g++ $(SRCROOT)/freetype-2.4.8/configure --build=$(TRIPLE) \
+	cd $(BUILD)/freetype && $(ENV) $(SRCROOT)/freetype-2.4.8/configure --build=$(TRIPLE) \
 		--without-bzip2 --without-ats --without-old-mac-fonts --disable-mmap --enable-static --disable-shared --prefix=$(INSTALL)/usr
 	cd $(BUILD)/freetype && $(ENV) make -j$(THREADS) && PATH=$(SDK)/usr/bin:$(PATH) make install

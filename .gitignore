@@ -5,3 +5,4 @@ install/usr/share
 install/usr/info
 install/usr/lib/pkgconfig
 install/usr/lib/terminfo
+install/usr/lib/*.la
