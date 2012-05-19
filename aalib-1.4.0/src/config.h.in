@@ -58,7 +58,7 @@
 /* Define if you have the <limits.h> header file.  */
 #undef HAVE_LIMITS_H
 
-/* Define if you have the <malloc.h> header file.  */
+/* Define if you have the <stdlib.h> header file.  */
 #undef HAVE_MALLOC_H
 
 /* Define if you have the <sys/ioctl.h> header file.  */

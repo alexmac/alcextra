@@ -19,6 +19,7 @@ all:
 	make freetype
 	make sdlttf
 	make physfs
+	make aalib
 
 	rm -f $(INSTALL)/usr/lib/*.la
 
@@ -36,6 +37,12 @@ physfs:
 		-DPHYSFS_BUILD_RUBY=0 -DOTHER_LDFLAGS=-lz -DPHYSFS_NO_64BIT_SUPPORT=1
 	cd $(BUILD)/physfs && $(ENV) make -j$(THREADS) && PATH=$(SDK)/usr/bin:$(PATH) make install
 
+aalib:
+	rm -rf $(BUILD)/aalib
+	mkdir -p $(BUILD)/aalib
+	cd $(BUILD)/aalib && $(ENV) $(SRCROOT)/aalib-1.4.0/configure --host=$(TRIPLE) --prefix=$(INSTALL)/usr \
+		--enable-static --disable-shared --without-x --with-curses-driver=no
+	cd $(BUILD)/aalib && $(ENV) make -j$(THREADS) && PATH=$(SDK)/usr/bin:$(PATH) make install
 
 ncurses:
 	rm -rf $(BUILD)/ncurses

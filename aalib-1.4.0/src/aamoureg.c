@@ -1,4 +1,4 @@
-#include <malloc.h>
+#include <stdlib.h>
 #include "config.h"
 #include "aalib.h"
 #include "aaint.h"
