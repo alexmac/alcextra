@@ -1,15 +1,6 @@
-# Compiled Object files
-*.slo
-*.lo
-*.o
-
-# Compiled Dynamic libraries
-*.so
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-
 build
-install
+install/usr/bin
+install/usr/man
+install/usr/share
+install/usr/lib/pkgconfig
+install/usr/lib/terminfo
