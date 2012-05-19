@@ -1,0 +1,30 @@
+For Unix
+
+   In most cases you should use:
+   CFLAGS=your best optimizing switches
+   export CFLAGS
+    #note that first two lines are usually not needed in case you use
+    #gnu c compiler where AA-lib uses quite good ones automatically
+   ./configure
+   make
+   make install
+
+   see help for configure in case of problems
+
+For DOS:
+   you need to compile vga/text libraries:
+   (available at AA-lib homepage http://aa-project.sourceforge.net/aalib/)
+     cd ../vga
+     make
+     cd ../text
+     make
+
+   then you can finally compile AA-lib
+
+     cd os2 ; make -f makefile.dos
+
+   then you should copy libaa.a libvga.a or libtext.a to your lib directory
+   and libaa.h to your include directory
+
+   All programs in AA-project expects AA-lib,vga and text archive in
+   uncompressed and compiled in same directory as sources of them

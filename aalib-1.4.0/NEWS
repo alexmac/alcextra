@@ -1,0 +1,19 @@
+Noteworthly changes in aalib-1.3 are:
+  - Raw keyboard driver for Linux console
+  - many bugfixes
+  - "reference" section in texinfo documentation
+  - Manual pages
+  - Comments in aalib.h
+  - Many "const" keywords added
+  - Configure no longer attempts to guess optimization switches.
+  - c2man generated manual pages added
+  - X driver now allows setting font using AAFont environment variable
+  - Added SDL/GTK+ like configuration scheme
+
+Noteworthly changes in aalib-1.1 are: 
+
+shared library support, better DOS mouse/keyboard support,
+OS/2 drivers, multiple windows support for X11 driver,
+Save driver now allows to specify FILE * instead of filename,
+new save formats, and other enhancements to save driver,
+few API changes (see ChangeLog) and many bugfixes

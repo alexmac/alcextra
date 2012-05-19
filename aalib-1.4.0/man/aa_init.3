@@ -1,0 +1,106 @@
+.\" WARNING! THIS FILE WAS GENERATED AUTOMATICALLY BY c2man!
+.\" DO NOT EDIT! CHANGES MADE TO THIS FILE WILL BE LOST!
+.TH "aa_init" 3 "8 September 1999" "c2man aalib.h"
+.SH "NAME"
+aa_init \- open the output display for AA-lib.
+.SH "SYNOPSIS"
+.ft B
+#include <aalib.h>
+.sp
+aa_context *aa_init
+.br
+(
+.br
+	const struct aa_driver *driver,
+.br
+	const struct aa_hardware_params *defparams,
+.br
+	const void *driverdata
+.br
+);
+.ft R
+.SH "PARAMETERS"
+.TP
+.B "const struct aa_driver *driver"
+Driver you want to use.  Available drivers are listed
+in the NULL terminated aa_drivers array.
+.TP
+.B "const struct aa_hardware_params *defparams"
+Hardware parameters you want.  Use aa_defparams
+for default values.
+.TP
+.B "const void *driverdata"
+This pointer is passed dirrectly to driver used
+to specify additional driver dependent parameters.
+.SH "DESCRIPTION"
+This is the most primitive AA-lib initialization function.
+Allows better control over the process than the easier to use
+aa_autoinit function.
+
+Every AA-lib program ought to have call to aa_parseoptions before
+first call to aa_init.
+.SH "RETURNS"
+Pointer to new AA-lib context or NULL if failed.
+.SH "SEE ALSO"
+save_d(3),
+mem_d(3),
+aa_help(3),
+aa_formats(3),
+aa_fonts(3),
+aa_dithernames(3),
+aa_drivers(3),
+aa_kbddrivers(3),
+aa_mousedrivers(3),
+aa_kbdrecommended(3),
+aa_mouserecommended(3),
+aa_displayrecommended(3),
+aa_defparams(3),
+aa_defrenderparams(3),
+aa_scrwidth(3),
+aa_scrheight(3),
+aa_mmwidth(3),
+aa_mmheight(3),
+aa_imgwidth(3),
+aa_imgheight(3),
+aa_image(3),
+aa_text(3),
+aa_attrs(3),
+aa_currentfont(3),
+aa_autoinit(3),
+aa_autoinitkbd(3),
+aa_autoinitmouse(3),
+aa_recommendhi(3),
+aa_recommendlow(3),
+aa_initkbd(3),
+aa_initmouse(3),
+aa_close(3),
+aa_uninitkbd(3),
+aa_uninitmouse(3),
+aa_fastrender(3),
+aa_render(3),
+aa_puts(3),
+aa_printf(3),
+aa_gotoxy(3),
+aa_hidecursor(3),
+aa_showcursor(3),
+aa_getmouse(3),
+aa_hidemouse(3),
+aa_showmouse(3),
+aa_registerfont(3),
+aa_setsupported(3),
+aa_setfont(3),
+aa_getevent(3),
+aa_getkey(3),
+aa_resize(3),
+aa_resizehandler(3),
+aa_parseoptions(3),
+aa_edit(3),
+aa_createedit(3),
+aa_editkey(3),
+aa_putpixel(3),
+aa_recommendhikbd(3),
+aa_recommendlowkbd(3),
+aa_recommendhimouse(3),
+aa_recommendlowmouse(3),
+aa_recommendhidisplay(3),
+aa_recommendlowdisplay(3)

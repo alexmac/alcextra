@@ -1,0 +1,23 @@
+#ifndef CONFIG_H
+#define CONFIG_H
+/* #undef HAVE_SELECT */
+/* #undef HAVE_REDRAWWIN */
+/* #undef HAVE_WREDRAWLN */
+/* #undef USE_NCURSES */
+/* #undef inline */
+/* #undef const */
+/* #undef _POSIX_SOURCE */
+#define STDC_HEADERS 1
+#define TIME_WITH_SYS_TIME 1
+/* #undef HAVE_TERMATTRS */
+/* #undef HAVE_MOUSEMASK */
+#define HAVE_STRDUP 1
+#define HAVE_LIMITS_H 1
+#define HAVE_SYS_TIME_H 1
+#define HAVE_SYS_IOCTL_H 1
+#define HAVE_UNISTD_H 1
+#define HAVE_FCNTL_H 1
+#define HAVE_MALLOC_H 1
+#define CONST const
+#define INLINE inline
+#endif

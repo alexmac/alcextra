@@ -1,0 +1,108 @@
+# Generated automatically from Makefile.in by configure.
+CC     = gcc
+CFLAGS = -O6 -m486 -fstrength-reduce -ffast-math -fomit-frame-pointer -funroll-loops
+LIBS   = libaa.a  -lm
+LFLAGS = 
+prefix= /usr/local
+exec_prefix= ${prefix}
+datadir= ${prefix}/share
+bindir= ${exec_prefix}/bin
+libdir= ${exec_prefix}/lib
+includedir= ${prefix}/include
+mandir= ${prefix}/man
+infodir= ${prefix}/info
+
+
+INCL = config.h 
+ 
+OBJS = aaos2.o \
+       aaos2kbd.o \
+       aaos2mou.o \
+       aafont.o \
+       aafonts.o \
+       aamktabl.o \
+       aamem.o \
+       aahelp.o \
+       aaprintf.o \
+       aafastre.o \
+       fontgl.o \
+       font16.o \
+       font14.o \
+       fontx16.o \
+       fontx13.o \
+       fontx13b.o \
+       fontcour.o \
+       aarec.o \
+       font9.o \
+       font8.o \
+       fontline.o \
+       aalib.o \
+       aaflush.o \
+       aarender.o \
+       aaout.o \
+       aain.o \
+       aaedit.o \
+       aaregist.o \
+       aakbdreg.o \
+       aamoureg.o \
+       aasave.o \
+       aastdout.o \
+       aastdin.o \
+       aaparse.o \
+       aaimgwidth.c \
+       aaimgheight.c \
+       aascrwidth.c \
+       aascrheight.c \
+       aammwidth.c \
+       aammheight.c \
+       aaimage.c \
+       aatext.c \
+       aacurrfnt.c \
+       aaattrs.c \
+       aaputpixel.c \
+       aarecfunc.c 
+
+
+all:	libaa.a aatest.exe fire.exe savefont.exe info.exe
+
+config.h: config.os2
+	cp config.os2 config.h
+
+libaa.a: config.h $(OBJS)
+	rm -f libaa.a
+	ar rcs libaa.a $(OBJS)
+
+aatest.exe: aatest.o libaa.a
+	$(CC) $(CFLAGS) $(LFLAGS) -o aatest.exe aatest.o $(LIBS)
+aafire.exe:   aafire.o libaa.a
+	$(CC) $(CFLAGS) $(LFLAGS) -o aafire.exe aafire.o $(LIBS)
+aasavefont.exe:   aasavefont.o libaa.a
+	$(CC) $(CFLAGS) $(LFLAGS) -o aasavefont.exe aasavefont.o $(LIBS)
+aainfo.exe:   aainfo.o libaa.a
+	$(CC) $(CFLAGS) $(LFLAGS) -o aainfo.exe aainfo.o $(LIBS)
+
+
+install: libaa.a
+	./install-sh -c -d $(libdir)
+	./install-sh -c -d $(includedir)
+	./install-sh -c -d $(infodir)
+	./install-sh -c -m 444 libaa.a $(libdir)
+	./install-sh -c -m 444 aalib.h $(includedir)
+	./install-sh -c -m 444 doc/aalib.info $(infodir)
+
+clean:
+	rm -f libaa.a aatest.exe fire.exe info.exe savefont.exe
+	rm -f core *.o *.a *.s *.~
+
+distclean:	clean
+	rm config.h config.log config.status config.cache makefile
+
+#dep:
+#	rm -f .depend
+#	make .depend
+#
+#.depend:
+#	echo '# Program dependencies' >.depend
+#	gcc -I svgalib $(DEFINES) -MM $(patsubst %.o,%.c,$(OBJS)) >>.depend
+#include .depend
+

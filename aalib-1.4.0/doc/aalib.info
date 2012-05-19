@@ -1,0 +1,114 @@
+This is aalib.info, produced by makeinfo version 4.0 from aalib.texinfo.
+
+INFO-DIR-SECTION Libraries
+START-INFO-DIR-ENTRY
+* AA-lib: (aalib).              An ASCII-art graphics library
+END-INFO-DIR-ENTRY
+
+   (C) 1997 Jan Hubicka & Kamil Toman
+
+   Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+
+Indirect:
+aalib.info-1: 409
+aalib.info-2: 42306
+aalib.info-3: 91590
+
+Tag Table:
+(Indirect)
+Node: Top409
+Node: Overview6006
+Node: Why?6220
+Node: What?6630
+Node: History7251
+Node: AA-Project8545
+Node: Skeleton9645
+Node: Initialization11729
+Node: Initialization as a normal graphics library13034
+Node: Easy initialization of AA-lib14102
+Node: Parsing of command line options15208
+Node: How does the autodetection work19684
+Node: Recommending drivers20897
+Node: Initialization as an ascii art renderer22696
+Node: Initialization for image saving23230
+Node: Specifying hardware parameters26820
+Node: Drawing image29270
+Node: Rendering31294
+Node: Flushing33847
+Node: Keyboard35989
+Node: Initialization of keyboard36379
+Node: Getting events37375
+Node: Mouse38345
+Node: Resizing39530
+Node: Other functions40768
+Node: Designing new driver42306
+Node: Reference50455
+Node: aa_attrs55203
+Node: aa_autoinitkbd55730
+Node: aa_autoinitmouse56662
+Node: aa_autoinit57485
+Node: aa_close58238
+Node: aa_createedit58622
+Node: aa_currentfont59644
+Node: aa_defparams60056
+Node: aa_defrenderparams60391
+Node: aa_displayrecommended60720
+Node: aa_dithernames61106
+Node: aa_drivers61438
+Node: aa_editkey61728
+Node: aa_edit62149
+Node: aa_fastrender62953
+Node: aa_fonts63958
+Node: aa_formats64212
+Node: aa_getevent64495
+Node: aa_getkey65304
+Node: aa_getmouse66023
+Node: aa_gotoxy66756
+Node: aa_help67321
+Node: aa_hidecursor67578
+Node: aa_hidemouse67966
+Node: aa_image68321
+Node: aa_imgheight68907
+Node: aa_imgwidth69265
+Node: aa_initkbd69621
+Node: aa_initmouse70462
+Node: aa_init71286
+Node: aa_kbddrivers72394
+Node: aa_kbdrecommended72701
+Node: aa_mmheight73063
+Node: aa_mmwidth73429
+Node: aa_mousedrivers73789
+Node: aa_mouserecommended74108
+Node: aa_parseoptions74484
+Node: aa_printf76050
+Node: aa_putpixel77598
+Node: aa_puts78156
+Node: aa_recommendhidisplay79627
+Node: aa_recommendhikbd80126
+Node: aa_recommendhimouse80626
+Node: aa_recommendhi81122
+Node: aa_recommendlowdisplay81783
+Node: aa_recommendlowkbd82285
+Node: aa_recommendlowmouse82782
+Node: aa_recommendlow83275
+Node: aa_registerfont83925
+Node: aa_render84367
+Node: aa_resizehandler85655
+Node: aa_resize86181
+Node: aa_scrheight86739
+Node: aa_scrwidth87101
+Node: aa_setfont87460
+Node: aa_setsupported87961
+Node: aa_showcursor88645
+Node: aa_showmouse89045
+Node: aa_text89399
+Node: aa_uninitkbd89955
+Node: aa_uninitmouse90394
+Node: mem_d90834
+Node: save_d91231
+Node: Index91590
+
+End Tag Table

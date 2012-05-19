@@ -1,0 +1,89 @@
+CC     = gcc
+#CFLAGS = -O6 -m486 -fstrength-reduce -ffast-math -fomit-frame-pointer -fforce-mem -fforce-addr    -I../text -Wall   -funroll-loops
+CFLAGS = -O2 -m486 -fstrength-reduce -ffast-math -fomit-frame-pointer -I../text -Wall  # -funroll-loops
+#CFLAGS = -O6 -m486 -fstrength-reduce -ffast-math -fomit-frame-pointer -fforce-mem -fforce-addr -funroll-loops -I/usr/include/ncurses   -I/usr/X11R6/include -Wall  
+#CFLAGS = -O6 -m486 -fstrength-reduce -ffast-math -fforce-mem -fforce-addr -funroll-loops -I/usr/include/ncurses   -I/usr/X11R6/include -Wall -pg
+#CFLAGS = -I/usr/include/ncurses   -I/usr/X11R6/include -Wall  -g
+LIBS   =  libaa.a ../text/libtext.a ../vga/libvga.a
+LFLAGS = 
+
+INCL = config.h \
+ 
+SRCS = aafont.c \
+       aafonts.c \
+       aastdout.c \
+       aastdin.c \
+       aamem.c \
+       aadosmou.c \
+       aaprintf.c \
+       aarec.c \
+       aahelp.c \
+       fontcour.c \
+       aamktable.c \
+       aafastrender.c \
+       fontgl.c \
+       font14.c \
+       aakbdreg.c \
+       aamoureg.c \
+       font16.c \
+       fontx13.c \
+       fontx13b.c \
+       fontx16.c \
+       aaflush.c \
+       font9.c \
+       font8.c \
+       fontline.c \
+       aados.c \
+       aalib.c \
+       aarender.c \
+       aain.c \
+       aaout.c \
+       aadoskbd.c \
+       aaedit.c \
+       aaregistry.c \
+       aasave.c \
+       aaparse.c \
+       aaimgwidth.c \
+       aaimgheight.c \
+       aascrwidth.c \
+       aascrheight.c \
+       aammwidth.c \
+       aammheight.c \
+       aaimage.c \
+       aatext.c \
+       aacurrfnt.c \
+       aaattrs.c \
+       aaputpixel.c \
+       aarecfunc.c 
+
+
+OBJS = $(SRCS:.c=.o)
+
+all:    libaa.a aatest aafire aainfo
+
+
+config.h:
+	copy  config.dos config.h
+
+libaa.a:  config.h $(OBJS)
+	rm -f libaa.a
+	ar rcs libaa.a $(OBJS)
+
+aatest: aatest.o libaa.a
+	$(CC) $(CFLAGS) $(LFLAGS) -o aatest aatest.o $(LIBS)
+aafire:   aafire.o libaa.a
+	$(CC) $(CFLAGS) $(LFLAGS) -o aafire aafire.o $(LIBS)
+aainfo:   aainfo.o libaa.a
+	$(CC) $(CFLAGS) $(LFLAGS) -o aainfo aainfo.o $(LIBS)
+
+
+
+clean:
+	rm -f libaa.a aatest fire info
+	rm -f core `find . -name '*.[oas]' -print`
+	rm -f core `find . -name '*~' -print`
+	rm -f core `find . -type f -name 'core' -print`
+
+distclean:clean
+	rm aconfig.h config.log config.status config.cache Makefile
+

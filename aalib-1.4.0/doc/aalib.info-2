@@ -1,0 +1,2101 @@
+This is aalib.info, produced by makeinfo version 4.0 from aalib.texinfo.
+
+INFO-DIR-SECTION Libraries
+START-INFO-DIR-ENTRY
+* AA-lib: (aalib).              An ASCII-art graphics library
+END-INFO-DIR-ENTRY
+
+   (C) 1997 Jan Hubicka & Kamil Toman
+
+   Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+
+File: aalib.info,  Node: Designing new driver,  Next: Reference,  Prev: Other functions,  Up: Top
+
+Designing new driver
+********************
+
+   To write new driver is quite easy. You need to implement just few
+very basic functions (like initialization, drawing to screen etc...)
+and register it in the driver registry. There is separate drivers for
+screen, mouse and keyboard.
+
+Display driver
+--------------
+
+   Display driver is the most significant driver (of course) so it is
+recomended to implement it first. Its structure is as follows:
+
+     struct aa_driver {
+       char *shortname, *name;
+       int (*init) (struct aa_hardware_params *, void *, struct aa_hardware_params);
+       void (*uninit) (struct aa_context *);
+       void (*getsize) (struct aa_context *, int *, int *);
+       void (*setattr) (struct aa_context *, int);
+       void (*print) (struct aa_context *, char *);
+       void (*gotoxy) (struct aa_context *,
+           int, int);
+       void (*flush) (struct aa_context *);
+       void (*cursormode) (struct
+           aa_context *, int);
+     };
+
+ - Text: shortname
+     SHORTNAME is an string that contain short name of your driver.
+     Short name is expected to be one word name like "`linux'".
+
+ - Text: name
+     NAME is an string that contain full name of your driver. It should
+     contain version etc. like "`Linux console driver version 1.0'"
+
+ - Function: init
+     This function is expected to initialize driver. It returns 0 if
+     failed or 1 if driver is initialized. Note that driver can't
+     produce any garbage when failed since AAlib will try to initialize
+     other driver. First parameter specifies hardware parameters that
+     user expect. Structure contain mask of attributes and recomended
+     size. Mechanizm of handling sizes is described in section.  Second
+     parameter is pointer to user data that should be passed by
+     application.  It is `NULL' by default. Last is pointer to
+     hardware_params structure, where driver will put parameters of
+     initialized device.  This structure holds information about
+     atributes and parameters supported by your driver. *Note
+     Initialization for image saving::.  Just first two fields are used
+     (`font' and `supported').  FONT is pointer to font structure used
+     by hardware. This field should be filed at runtime (see
+     `aalinux.c' for example), set statically to one of aalib's fonts
+     or set to `NULL' if hardware does not allow detection of font
+     (such as text terminals). SUPPORTED is mask of all atributes
+     supported by your hardware ( `AA_NORMAL_MASK', `AA_DIM_MASK',
+     `AA_BOLD_MASK', `AA_BOLDFONT_MASK', `AA_REVERSE_MASK') and rage of
+     useable characters (by default just standard ASCII characters are
+     used) use `AA_EXTENDED' if your driver supports all characters
+     (0-255).  `AA_ALL' should be used if your driver displays
+     characters instead of blanks (cr, tab etc..), `AA_EIGHT' lets
+     AAlib use characters greater than 128.  `Mmwidth' and `mmheight'
+     fields should be also set if is possible to determine physical
+     size of screen/window.  *Note Specifying hardware parameters::
+
+     Last parameter should be used to define pointer that will be later
+     set to `driverdata' field of `aa_context'. If driver needs some
+     additional data, it should alloc driverdata structure, that will
+     hold this data. AAlib will automatically free this pointer at
+     `aa_close' if it is non-NULL.
+
+     This function should also recomend best available keyboard and
+     mouse drivers.  *Note How does the autodetection work::.
+
+ - Function: uninit
+     This functin uninitializes driver and frees all resources used by
+     it.
+
+ - Function: getsize
+     This function returns width and height of screen in characters.
+
+   There is two alternate ways to implement screen output. First way is
+commonly used by text libraries - print/gotoxy/setattr mechanizm.
+Second one is flush. Flush should be fast function that display AAlibs
+internal buffer to screen. This way is preffered.  In case PRINT field
+is set to `NULL' AAlib will call just flush and expect that driver will
+update screen automatically from internal buffers. When both PRINT and
+FLUSH are non`NULL' AAlib will first use PRINT/SETATTR/GOTOXY to update
+screen and then call FLUSH. Note that in case PRINT is `NULL', SETATTR
+should be also `NULL' but `gotoxy' needs to be non`NULL' since it is
+used to sed hardware cursor.
+
+ - Function: setattr
+     Set current attributes
+
+ - Function: print
+     Print text at current cursor possition using current attrubutes
+
+ - Function: gotoxy
+     Change cursor possition (coordinated begins by 0,0 in top left
+     corner)
+
+ - Function: flush
+     Flush current screen to output. In case you use AAlibs internal
+     buffers to update screen (not PRINT) mechanizm get pointer to text
+     and attribute buffer using `aa_text' and `aa_attr' functions.
+     Buffers are formated into "normal" videoram - starting in top left
+     corner and continue like english text. Attribute buffer should
+     contain `AA_NORMAL', `AA_BOLD', `AA_BOLDFONT', `AA_DIM',
+     `AA_REVERSE' and `AA_SPECIAL' values.
+
+ - Function: cursormode
+     This function is used to enable/disable cursor. 1 means enable, 0
+     disable.  Should be set to `NULL' if your hardware don't support
+     this.
+
+Keyboard driver
+---------------
+
+   This driver is defined by structure:
+     struct aa_kbddriver {
+           char *shortname, *name;
+           int flags;
+           int (*init) (struct aa_context *, int mode);
+           void (*uninit) (struct aa_context *);
+           int (*getkey) (struct aa_context *, int);
+     };
+
+ - String: shortname
+
+ - String: name
+     This fields have similiar as in display drivers.
+
+ - Integer: flags
+     This field informs about extensions supported by driver. Currently
+     should be set to `AA_SENDRELEASE' in case driver should inform
+     about key releases too.
+
+ - Function: init
+     Similiar functionality as in display drivers. MODE should be set
+     to 0 or `AA_SENDRELEASE' in case application wants to be informed
+     about key releases too. Note that driver should send releases even
+     MODE is 0.
+
+     This function should also recomend best available mouse driver.
+     *Note How does the autodetection work::.
+
+ - Function: uninit
+     Uninitializes driver
+
+ - Function: getkey
+     This funtion return key. Second parameters is set to 1 if function
+     is expected to wait for key or 0 if is expected to return
+     `AA_NONE' of no event is pending. Function returns also key
+     releases -- like normal keys masked by `AA_RELEASE'. It also
+     recognizes some special keys. *Note Getting events::. It should
+     also cooperate with mouse driver and return `AA_MOUSE' if mouse
+     event is pending. Second way is to ignore wait parameters and
+     never wait for key when mouse driver is enabled. This way is not
+     recomended for multitasking enviroments.
+
+Mouse driver
+------------
+
+   This driver is defined by structure:
+     struct aa_mousedriver {
+           char *shortname, *name;
+           int flags;
+           int (*init) (struct aa_context *, int mode);
+           void (*uninit) (struct aa_context *);
+           void (*getmouse) (struct aa_context *, int *x, int *y, int *buttons);
+           void (*cursormode) (struct aa_context *,int);
+     };
+
+   First five fields has very similiar meaning to ones in keyboard
+driver.  `flags' is set to all events driver should report about:
+`AA_MOUSEMOVEMASK', `AA_MOUSEPRESSMASK' and `AA_PRESSEDMOVEMAKS'. All
+of them are colected into `AA_MOUSEALLMASK'. If driver has
+showcursor/hidecursor functionality set also flag `AA_HIDECURSOR'. MODE
+parameter to INIT function should be set to mask of events application
+wants to know about, like in FLAGS.
+
+ - Function: getmouse
+     This function returns coordinates of cursor and mask of buttons
+     (`AA_BUTTON1', `AA_BUTTON2', `AA_BUTTON3'). Coordinates are same
+     as for `gotoxy' call.
+
+ - Function: cursormode
+     This function is used to show/disable mouse cursor.  Should be set
+     to `NULL' if not supported.
+
+
+File: aalib.info,  Node: Reference,  Next: Index,  Prev: Designing new driver,  Up: Top
+
+Reference
+*********
+
+* Menu:
+
+
+* aa_attrs::             returns pointer to the text output buffer used by AA-lib.
+* aa_autoinitkbd::       easy to use AA-lib keyboard initialization function.
+* aa_autoinitmouse::     easy to use AA-lib mouse initialization function.
+* aa_autoinit::          easy to use AA-lib initialization function.
+* aa_close::             close the AA-lib context.
+* aa_createedit::        Simple interactive line editor provided as helper function.
+* aa_currentfont::       returns specification of the fonts used by AA-lib rendering routines.
+* aa_defparams::         default hardware paramters requested by AA-lib programs.
+* aa_defrenderparams::   default rendering parameters.
+* aa_displayrecommended::List of recommended drivers.
+* aa_dithernames::       Names of dithering methods supported by AA-lib.
+* aa_drivers::           NULL-terminated array of output drivers available in AA-lib.
+* aa_editkey::           Notify the line editor about keypress.
+* aa_edit::              Simple interactive line editor.
+* aa_fastrender::        simple and fast AA-lib rendering function.
+* aa_fonts::             Null-terminated array of available fonts.
+* aa_formats::           NULL terminated array of save formats supported by AA-lib.
+* aa_getevent::          keyboard functions
+* aa_getkey::            return next keypress event from queue.
+* aa_getmouse::          Get mouse position as specified by last mouse event read by aa_getevent.
+* aa_gotoxy::            move the hardware cursor (if any) to specified position.
+* aa_help::              AA-lib help string for the default command line parser.
+* aa_hidecursor::        hide the hardware cursor.
+* aa_hidemouse::         hide the mouse cursor.
+* aa_image::             returns pointer to the framebuffer emulated by AA-lib.
+* aa_imgheight::         returns height of the emulated image in pixels.
+* aa_imgwidth::          returns width of the emulated image in pixels.
+* aa_initkbd::           initialize the AA-lib keyboard driver.
+* aa_initmouse::         initialize the AA-lib mouse driver.
+* aa_init::              open the output display for AA-lib.
+* aa_kbddrivers::        NULL-terminated array of keyboard drivers available in AA_lib.
+* aa_kbdrecommended::    List of recommended drivers.
+* aa_mmheight::          returns height of the output screen in millimeters.
+* aa_mmwidth::           returns width of the output screen in millimeters.
+* aa_mousedrivers::      NULL terminated array of mouse drivers supported by AA-lib.
+* aa_mouserecommended::  List of recommended drivers.
+* aa_parseoptions::      parse the standard command line options used by AA-lib.
+* aa_printf::            print text to AA-lib output buffers.
+* aa_putpixel::          put pixel to emulated framebuffer
+* aa_puts::              output string to AA-lib output buffers.
+* aa_recommendhidisplay::insert the given driver on beggining of the list of recommended display drivers.
+* aa_recommendhikbd::    insert the given driver on beggining of the list of recommended keyboard drivers.
+* aa_recommendhimouse::  insert the given driver on beggining of the list of recommended mouse drivers.
+* aa_recommendhi::       insert the given driver on beggining of the list of recommended drivers.
+* aa_recommendlowdisplay::Add the given driver to the end of list of display recommended drivers.
+* aa_recommendlowkbd::   Add the given driver to the end of list of keyboard recommended drivers.
+* aa_recommendlowmouse:: Add the given driver to the end of list of mouse recommended drivers.
+* aa_recommendlow::      Add the given driver to the end of list of recommended drivers.
+* aa_registerfont::      add new font specification to aa_fonts array.
+* aa_render::            convert image buffer to ASCII-art.
+* aa_resizehandler::     Set user handler to be called on resize event.
+* aa_resize::            resize functions
+* aa_scrheight::         returns height of the output screen in characters.
+* aa_scrwidth::          returns width of the output screen in characters.
+* aa_setfont::           set font specification to be used by rendering functions.
+* aa_setsupported::      alter the "supported" field of hardware_params structure used by AA-lib
+* aa_showcursor::        show the hardware cursor.
+* aa_showmouse::         show the mouse cursor.
+* aa_text::              returns pointer to the text output buffer used by AA-lib.
+* aa_uninitkbd::         uninitialize the keyboard driver.
+* aa_uninitmouse::       uninitialize the mouse driver.
+* mem_d::                AA-lib memory driver.
+* save_d::               AA-lib driver used to save ascii-art image into file in used specified format.
+
+
+File: aalib.info,  Node: aa_attrs,  Next: aa_autoinitkbd,  Up: Reference
+
+aa_attrs
+========
+
+     #include <aalib.h>
+
+
+     char *aa_attrs(aa_context *a);
+
+Parameters
+==========
+
+    `aa_context *a'
+          Specifies the AA-lib context to operate on.
+
+Description
+===========
+
+The attribute output buffer is simple array of characters specifying
+the attributes.  The array is organizated in the aa_scrheight (a) rows
+of aa_scrwidth(a) characters.
+
+Return value
+============
+
+Pointer the text output buffer used by AA-lib.
+
+
+File: aalib.info,  Node: aa_autoinitkbd,  Next: aa_autoinitmouse,  Prev: aa_attrs,  Up: Reference
+
+aa_autoinitkbd
+==============
+
+     #include <aalib.h>
+
+
+     int aa_autoinitkbd
+     (
+         struct aa_context *context,
+         int mode
+     );
+
+Parameters
+==========
+
+    `struct aa_context *context'
+          Specifies the AA-lib context to operate on.
+
+    `int mode'
+          Mask of extra features you request. Can contain
+          AA_SENDRELEASE if you are interested in release events too.
+
+Description
+===========
+
+Attempts to find available keyboard driver supporting the specified
+mode.  First attempts to initialize the recommended drivers and then in
+order drivers available in the aa_kbddrivers array (all regular output
+drivers compiled into AA-lib).
+
+   Every AA-lib program ought to have call to aa_parseoptions before
+first call to aa_init.
+
+Return value
+============
+
+1 when succesfull or 0 on failure.
+
+
+File: aalib.info,  Node: aa_autoinitmouse,  Next: aa_autoinit,  Prev: aa_autoinitkbd,  Up: Reference
+
+aa_autoinitmouse
+================
+
+     #include <aalib.h>
+
+
+     int aa_autoinitmouse
+     (
+         struct aa_context *c,
+         int mode
+     );
+
+Parameters
+==========
+
+    `struct aa_context *c'
+          Specifies the AA-lib context to operate on.
+
+    `int mode'
+          Mask of extra features you request.  No such features are
+          available in the current AA-lib version.
+
+Description
+===========
+
+Attempts to find available mouse driver supporting the specified mode.
+First attempts to initialize the recommended drivers and then in order
+drivers available in the aa_kbddrivers array (all regular output
+drivers compiled into AA-lib).
+
+Return value
+============
+
+1 when succesfull or 0 on failure.
+
+
+File: aalib.info,  Node: aa_autoinit,  Next: aa_close,  Prev: aa_autoinitmouse,  Up: Reference
+
+aa_autoinit
+===========
+
+     #include <aalib.h>
+
+
+     aa_context *aa_autoinit(const struct aa_hardware_params *params);
+
+Parameters
+==========
+
+    `const struct aa_hardware_params *params'
+          Hardware parameters you want.  Use aa_defparams for default
+          values.
+
+Description
+===========
+
+Attempts to find available output driver supporting the specified
+parameters.  First attempts to initialize the recommended drivers and
+then in order drivers available in the aa_drivers array (all regular
+output drivers compiled into AA-lib).
+
+Return value
+============
+
+Pointer to initialized context structure when succesfull or NULL on
+failure.
+
+
+File: aalib.info,  Node: aa_close,  Next: aa_createedit,  Prev: aa_autoinit,  Up: Reference
+
+aa_close
+========
+
+     #include <aalib.h>
+
+
+     void aa_close(aa_context *c);
+
+Parameters
+==========
+
+    `aa_context *c'
+          Specifies the AA-lib context to operate on.
+
+Description
+===========
+
+Uninitialize all activated drivers and frees the memory used by context
+structures.
+
+
+File: aalib.info,  Node: aa_createedit,  Next: aa_currentfont,  Prev: aa_close,  Up: Reference
+
+aa_createedit
+=============
+
+     #include <aalib.h>
+
+
+     struct aa_edit *aa_createedit
+     (
+         aa_context *c,
+         int x,
+         int y,
+         int size,
+         char *s,
+         int maxsize
+     );
+
+Parameters
+==========
+
+    `aa_context *c'
+          Specifies the AA-lib context to operate on.
+
+    `int x'
+          X coordinate of the edited text.
+
+    `int y'
+          Y coordinate of the edited text.
+
+    `int size'
+          Length of the editor window.
+
+    `char *s'
+          Buffer to edit (containing default value).
+
+    `int maxsize'
+          Size of the buffer.
+
+Description
+===========
+
+You might use this function to input strings in AA-lib programs.  This
+function initializes the aa_edit structure used by event-based editor.
+You might then call the aa_editkey function when key is pressed.
+
+Return value
+============
+
+Pointer to edit context when succesfull and NULL on failure.
+
+
+File: aalib.info,  Node: aa_currentfont,  Next: aa_defparams,  Prev: aa_createedit,  Up: Reference
+
+aa_currentfont
+==============
+
+     #include <aalib.h>
+
+
+     const struct aa_font *aa_currentfont(aa_context *a);
+
+Parameters
+==========
+
+    `aa_context *a'
+          Specifies the AA-lib context to operate on.
+
+Description
+===========
+
+Returns specification of the fonts used by AA-lib rendering routines.
+
+
+File: aalib.info,  Node: aa_defparams,  Next: aa_defrenderparams,  Prev: aa_currentfont,  Up: Reference
+
+aa_defparams
+============
+
+     #include <aalib.h>
+
+
+     extern struct aa_hardware_params aa_defparams;
+
+Description
+===========
+
+Pa Default hardware paramters requested by AA-lib programs. Passed to
+aa_init function familly.
+
+
+File: aalib.info,  Node: aa_defrenderparams,  Next: aa_displayrecommended,  Prev: aa_defparams,  Up: Reference
+
+aa_defrenderparams
+==================
+
+     #include <aalib.h>
+
+
+     extern struct aa_renderparams aa_defrenderparams;
+
+Description
+===========
+
+Default rendering parameters. Passed to aa_render function familly.
+
+
+File: aalib.info,  Node: aa_displayrecommended,  Next: aa_dithernames,  Prev: aa_defrenderparams,  Up: Reference
+
+aa_displayrecommended
+=====================
+
+     #include <aalib.h>
+
+
+     extern aa_linkedlist *aa_displayrecommended;
+
+Description
+===========
+
+List of recommended drivers is used by aa_autoinit familly of functions
+and altered by aa_recommend familly of functions.
+
+
+File: aalib.info,  Node: aa_dithernames,  Next: aa_drivers,  Prev: aa_displayrecommended,  Up: Reference
+
+aa_dithernames
+==============
+
+     #include <aalib.h>
+
+
+     extern const char *const aa_dithernames[];
+
+Description
+===========
+
+NULL terminated array containing the names of supported dithering
+methods as ascii strings.
+
+
+File: aalib.info,  Node: aa_drivers,  Next: aa_editkey,  Prev: aa_dithernames,  Up: Reference
+
+aa_drivers
+==========
+
+     #include <aalib.h>
+
+
+     extern const struct aa_driver *const aa_drivers[];
+
+Description
+===========
+
+NULL-terminated array of output drivers available in AA-lib.
+
+
+File: aalib.info,  Node: aa_editkey,  Next: aa_edit,  Prev: aa_drivers,  Up: Reference
+
+aa_editkey
+==========
+
+     #include <aalib.h>
+
+
+     void aa_editkey
+     (
+         struct aa_edit *e,
+         int c
+     );
+
+Parameters
+==========
+
+    `struct aa_edit *e'
+          Editor context to use (see aa_createedit).
+
+    `int c'
+          Key pressed.
+
+Description
+===========
+
+Notify the line editor about keypress.
+
+
+File: aalib.info,  Node: aa_edit,  Next: aa_fastrender,  Prev: aa_editkey,  Up: Reference
+
+aa_edit
+=======
+
+     #include <aalib.h>
+
+
+     void aa_edit
+     (
+         aa_context *c,
+         int x,
+         int y,
+         int size,
+         char *s,
+         int maxsize
+     );
+
+Parameters
+==========
+
+    `aa_context *c'
+          Specifies the AA-lib context to operate on.
+
+    `int x'
+          X coordinate of the edited text.
+
+    `int y'
+          Y coordinate of the edited text.
+
+    `int size'
+          Length of the editor window.
+
+    `char *s'
+          Buffer to edit (containing default value).
+
+    `int maxsize'
+          Size of the buffer.
+
+Description
+===========
+
+This function produces the simple interactive line editor that can be
+used by AA-lib programs to input strings.
+
+
+File: aalib.info,  Node: aa_fastrender,  Next: aa_fonts,  Prev: aa_edit,  Up: Reference
+
+aa_fastrender
+=============
+
+     #include <aalib.h>
+
+
+     void aa_fastrender
+     (
+         aa_context *c,
+         int x1,
+         int y1,
+         int x2,
+         int y2
+     );
+
+Parameters
+==========
+
+    `aa_context *c'
+          Specifies the AA-lib context to operate on.
+
+    `int x1'
+          Column of top left coner of rendered area (in characters!).
+
+    `int y1'
+          Row of top left coner of rendered area.
+
+    `int x2'
+          Column of bottom right coner of rendered area.
+
+    `int y2'
+          Row of bottom right coner of rendered area.
+
+Description
+===========
+
+This function does the trick of converting the emulated framebuffer
+into high quality ASCII-art. It is slightly faster and less flexible
+the aa_render function.
+
+   Note that to see the effect you need to call aa_flush too.
+
+   First call to this function may take a while, because the rendering
+tables are produced.
+
+
+File: aalib.info,  Node: aa_fonts,  Next: aa_formats,  Prev: aa_fastrender,  Up: Reference
+
+aa_fonts
+========
+
+     #include <aalib.h>
+
+
+     extern const struct aa_font *aa_fonts[];
+
+Description
+===========
+
+Null-terminated array of available fonts.
+
+
+File: aalib.info,  Node: aa_formats,  Next: aa_getevent,  Prev: aa_fonts,  Up: Reference
+
+aa_formats
+==========
+
+     #include <aalib.h>
+
+
+     extern const struct aa_format *const aa_formats[];
+
+Description
+===========
+
+NULL terminated array of save formats supported by AA-lib.
+
+
+File: aalib.info,  Node: aa_getevent,  Next: aa_getkey,  Prev: aa_formats,  Up: Reference
+
+aa_getevent
+===========
+
+     #include <aalib.h>
+
+
+     int aa_getevent
+     (
+         aa_context *c,
+         int wait
+     );
+
+Parameters
+==========
+
+    `aa_context *c'
+          Specifies the AA-lib context to operate on.
+
+    `int wait'
+          1 if you wish to wait for the even when queue is empty.
+
+Description
+===========
+
+Return next event from queue.  Return next even from queue. Optionally
+wait for even when queue is empty.
+
+Return value
+============
+
+Next event from queue (values lower than 256 are used to report ascii
+values of pressed keys and higher values have special meanings) See the
+AA-lib texinfo documentation for more details.  0 is returned when
+queue is empty and wait is set to 0.
+
+
+File: aalib.info,  Node: aa_getkey,  Next: aa_getmouse,  Prev: aa_getevent,  Up: Reference
+
+aa_getkey
+=========
+
+     #include <aalib.h>
+
+
+     int aa_getkey
+     (
+         aa_context *c,
+         int wait
+     );
+
+Parameters
+==========
+
+    `aa_context *c'
+          Specifies the AA-lib context to operate on.
+
+    `int wait'
+          1 if you wish to wait for the even when queue is empty.
+
+Description
+===========
+
+Return next keypress event from queue.
+
+Return value
+============
+
+Next keypress event from queue (values lower than 256 are used to
+report ascii values of pressed keys and higher values are used to
+represent some special keys like arrows) See the AA-lib texinfo
+documentation for more details.
+
+
+File: aalib.info,  Node: aa_getmouse,  Next: aa_gotoxy,  Prev: aa_getkey,  Up: Reference
+
+aa_getmouse
+===========
+
+     #include <aalib.h>
+
+
+     void aa_getmouse
+     (
+         aa_context *c,
+         int *x,
+         int *y,
+         int *b
+     );
+
+Parameters
+==========
+
+    `aa_context *c'
+          Specifies the AA-lib context to operate on.
+
+    `int *x'
+          Used to return X coordinate of mouse in characters.
+
+    `int *y'
+          Used to return Y coordinate of mouse in characters.
+
+    `int *b'
+          Used to return button mask of mouse.  (Values used are
+          AA_BUTTON1, AA_BUTTON2 and AA_BUTTON3).
+
+Description
+===========
+
+Get mouse position as specified by last mouse event read by aa_getevent.
+
+
+File: aalib.info,  Node: aa_gotoxy,  Next: aa_help,  Prev: aa_getmouse,  Up: Reference
+
+aa_gotoxy
+=========
+
+     #include <aalib.h>
+
+
+     void aa_gotoxy
+     (
+         aa_context *c,
+         int x,
+         int y
+     );
+
+Parameters
+==========
+
+    `aa_context *c'
+          Specifies the AA-lib context to operate on.
+
+    `int x'
+          X coordinate of new position.
+
+    `int y'
+          Y coordinate of the position.
+
+Description
+===========
+
+Move the hardware cursor (if any) to specified position.  To see the
+effect you need to call aa_flush too.
+
+
+File: aalib.info,  Node: aa_help,  Next: aa_hidecursor,  Prev: aa_gotoxy,  Up: Reference
+
+aa_help
+=======
+
+     #include <aalib.h>
+
+
+     extern const char *const aa_help;
+
+Description
+===========
+
+AA-lib help string for the default command line parser.
+
+
+File: aalib.info,  Node: aa_hidecursor,  Next: aa_hidemouse,  Prev: aa_help,  Up: Reference
+
+aa_hidecursor
+=============
+
+     #include <aalib.h>
+
+
+     void aa_hidecursor(aa_context *c);
+
+Parameters
+==========
+
+    `aa_context *c'
+          Specifies the AA-lib context to operate on.
+
+Description
+===========
+
+Hide the hardware cursor.  This function may be ignored by some drivers.
+
+
+File: aalib.info,  Node: aa_hidemouse,  Next: aa_image,  Prev: aa_hidecursor,  Up: Reference
+
+aa_hidemouse
+============
+
+     #include <aalib.h>
+
+
+     void aa_hidemouse(aa_context *c);
+
+Parameters
+==========
+
+    `aa_context *c'
+          Not Documented.
+
+Description
+===========
+
+Hide the mouse cursor.  This function may be ignored by some drivers.
+
+
+File: aalib.info,  Node: aa_image,  Next: aa_imgheight,  Prev: aa_hidemouse,  Up: Reference
+
+aa_image
+========
+
+     #include <aalib.h>
+
+
+     char *aa_image(aa_context *a);
+
+Parameters
+==========
+
+    `aa_context *a'
+          Specifies the AA-lib context to operate on.
+
+Description
+===========
+
+The framebuffer is simple array of characters specifying the brightness
+value (or palette index depending on the aa_render call). The array is
+organizated in the aa_imgheight (a) rows of aa_imgwidth(a) characters.
+
+Return value
+============
+
+Pointer to framebuffer emulated by AA-lib.
+
+
+File: aalib.info,  Node: aa_imgheight,  Next: aa_imgwidth,  Prev: aa_image,  Up: Reference
+
+aa_imgheight
+============
+
+     #include <aalib.h>
+
+
+     int aa_imgheight(aa_context *a);
+
+Parameters
+==========
+
+    `aa_context *a'
+          Specifies the AA-lib context to operate on.
+
+Description
+===========
+
+Returns height of the emulated image in pixels.
+
+
+File: aalib.info,  Node: aa_imgwidth,  Next: aa_initkbd,  Prev: aa_imgheight,  Up: Reference
+
+aa_imgwidth
+===========
+
+     #include <aalib.h>
+
+
+     int aa_imgwidth(aa_context *a);
+
+Parameters
+==========
+
+    `aa_context *a'
+          Specifies the AA-lib context to operate on.
+
+Description
+===========
+
+Returns width of the emulated image in pixels.
+
+
+File: aalib.info,  Node: aa_initkbd,  Next: aa_initmouse,  Prev: aa_imgwidth,  Up: Reference
+
+aa_initkbd
+==========
+
+     #include <aalib.h>
+
+
+     int aa_initkbd
+     (
+         struct aa_context *context,
+         const struct aa_kbddriver *drv,
+         int mode
+     );
+
+Parameters
+==========
+
+    `struct aa_context *context'
+          Specifies the AA-lib context to operate on.
+
+    `const struct aa_kbddriver *drv'
+          Driver you wish to use.
+
+    `int mode'
+          Mask of extra features you request. Can contain
+          AA_SENDRELEASE if you are interested in release events too.
+
+Description
+===========
+
+This is the most primitive AA-lib keyboard initialization function.
+Allows better control over the process than the easier to use
+aa_autoinitkbd function.
+
+Return value
+============
+
+1 on success and 0 on fail.
+
+
+File: aalib.info,  Node: aa_initmouse,  Next: aa_init,  Prev: aa_initkbd,  Up: Reference
+
+aa_initmouse
+============
+
+     #include <aalib.h>
+
+
+     int aa_initmouse
+     (
+         struct aa_context *c,
+         const struct aa_mousedriver *d,
+         int mode
+     );
+
+Parameters
+==========
+
+    `struct aa_context *c'
+          Specifies the AA-lib context to operate on.
+
+    `const struct aa_mousedriver *d'
+          Driver you wish to use.
+
+    `int mode'
+          Mask of extra features you request.  No such features are
+          available in the current AA-lib version.
+
+Description
+===========
+
+This is the most primitive AA-lib keyboard initialization function.
+Allows better control over the process than the easier to use
+aa_autoinitmouse function.
+
+Return value
+============
+
+1 on success and 0 on fail.
+
+
+File: aalib.info,  Node: aa_init,  Next: aa_kbddrivers,  Prev: aa_initmouse,  Up: Reference
+
+aa_init
+=======
+
+     #include <aalib.h>
+
+
+     aa_context *aa_init
+     (
+         const struct aa_driver *driver,
+         const struct aa_hardware_params *defparams,
+         const void *driverdata
+     );
+
+Parameters
+==========
+
+    `const struct aa_driver *driver'
+          Driver you want to use.  Available drivers are listed in the
+          NULL terminated aa_drivers array.
+
+    `const struct aa_hardware_params *defparams'
+          Hardware parameters you want.  Use aa_defparams for default
+          values.
+
+    `const void *driverdata'
+          This pointer is passed dirrectly to driver used to specify
+          additional driver dependent parameters.
+
+Description
+===========
+
+This is the most primitive AA-lib initialization function.  Allows
+better control over the process than the easier to use aa_autoinit
+function.
+
+   Every AA-lib program ought to have call to aa_parseoptions before
+first call to aa_init.
+
+Return value
+============
+
+Pointer to new AA-lib context or NULL if failed.
+
+
+File: aalib.info,  Node: aa_kbddrivers,  Next: aa_kbdrecommended,  Prev: aa_init,  Up: Reference
+
+aa_kbddrivers
+=============
+
+     #include <aalib.h>
+
+
+     extern const struct aa_kbddriver *const aa_kbddrivers[];
+
+Description
+===========
+
+NULL-terminated array of keyboard drivers available in AA_lib.
+
+
+File: aalib.info,  Node: aa_kbdrecommended,  Next: aa_mmheight,  Prev: aa_kbddrivers,  Up: Reference
+
+aa_kbdrecommended
+=================
+
+     #include <aalib.h>
+
+
+     extern aa_linkedlist *aa_kbdrecommended;
+
+Description
+===========
+
+List of recommended drivers is used by aa_autoinit familly of functions
+and altered by aa_recommend familly of functions.
+
+
+File: aalib.info,  Node: aa_mmheight,  Next: aa_mmwidth,  Prev: aa_kbdrecommended,  Up: Reference
+
+aa_mmheight
+===========
+
+     #include <aalib.h>
+
+
+     int aa_mmheight(aa_context *a);
+
+Parameters
+==========
+
+    `aa_context *a'
+          Specifies the AA-lib context to operate on.
+
+Description
+===========
+
+Returns height of the output screen in millimeters.
+
+
+File: aalib.info,  Node: aa_mmwidth,  Next: aa_mousedrivers,  Prev: aa_mmheight,  Up: Reference
+
+aa_mmwidth
+==========
+
+     #include <aalib.h>
+
+
+     int aa_mmwidth(aa_context *a);
+
+Parameters
+==========
+
+    `aa_context *a'
+          Specifies the AA-lib context to operate on.
+
+Description
+===========
+
+Returns width of the output screen in millimeters.
+
+
+File: aalib.info,  Node: aa_mousedrivers,  Next: aa_mouserecommended,  Prev: aa_mmwidth,  Up: Reference
+
+aa_mousedrivers
+===============
+
+     #include <aalib.h>
+
+
+     extern const struct aa_mousedriver *const aa_mousedrivers[];
+
+Description
+===========
+
+NULL terminated array of mouse drivers supported by AA-lib.
+
+
+File: aalib.info,  Node: aa_mouserecommended,  Next: aa_parseoptions,  Prev: aa_mousedrivers,  Up: Reference
+
+aa_mouserecommended
+===================
+
+     #include <aalib.h>
+
+
+     extern aa_linkedlist *aa_mouserecommended;
+
+Description
+===========
+
+List of recommended drivers is used by aa_autoinit familly of functions
+and altered by aa_recommend familly of functions.
+
+
+File: aalib.info,  Node: aa_parseoptions,  Next: aa_printf,  Prev: aa_mouserecommended,  Up: Reference
+
+aa_parseoptions
+===============
+
+     #include <aalib.h>
+
+
+     int aa_parseoptions
+     (
+         struct aa_hardware_params *p,
+         aa_renderparams *r,
+         int *argc,
+         char **argv
+     );
+
+Parameters
+==========
+
+    `struct aa_hardware_params *p'
+          Hardware parameters structure to alter. It is expected that
+          this structure only with necessary modifications will be
+          later used to initialize the AA-lib context.
+
+    `aa_renderparams *r'
+          Rendering prameters structure to alter. It is expected that
+          this structure only with necessary modifications will be
+          later used to render images.
+
+    `int *argc'
+          Pointer to argc parameter passed to function "main".
+
+    `char **argv'
+          Pointer to argv parameter passed to function "main".
+
+Description
+===========
+
+Use this function to parse the standard command line options used by
+AA-lib. Every AA-lib program ought to call this function to let user
+specify some extra parameters.  The function alters the
+aa_hardware_params and aa_renderparams structures and removes known
+options from the argc/argv lists. It also parse the AAOPTS environment
+variable.  When called with NULL for the argc/argv parameters, it
+parses AAOPTS only. At least this call ought to be in every AA-lib
+program.
+
+Return value
+============
+
+1 when sucesfull and 0 on failure. The program then can print the help
+text available in aa_help variable.
+
+
+File: aalib.info,  Node: aa_printf,  Next: aa_putpixel,  Prev: aa_parseoptions,  Up: Reference
+
+aa_printf
+=========
+
+     #include <aalib.h>
+
+
+     int aa_printf
+     (
+         aa_context *c,
+         int x,
+         int y,
+         enum aa_attribute attr,
+         const char *fmt,
+         ...
+     );
+
+Parameters
+==========
+
+    `aa_context *c'
+          Specifies the AA-lib context to operate on.
+
+    `int x'
+          X coordinate of the first character.
+
+    `int y'
+          Y coordinate of the first character.
+
+    `enum aa_attribute attr'
+          Attribute to use.
+
+
+          Possible values for an `enum aa_attribute' are as follows:
+              `AA_NORMAL'
+                    Normal characters.
+
+              `AA_DIM'
+                    Dark characters.
+
+              `AA_BOLD'
+                    Bright characters.
+
+              `AA_BOLDFONT'
+                    Characters rendered in bold font.
+
+              `AA_REVERSE'
+                    Reversed (black on whilte) characters.
+
+              `AA_SPECIAL'
+                    Render characters in a way easilly visible on the
+                    screen.  The exact rendering is driver dependent,
+                    but this mode ought to be used to output texts you
+                    want to make easilly visible in the image.
+
+    `const char *fmt'
+          Text to output in standard printf format.
+
+    `...'
+          Not Documented.
+
+Description
+===========
+
+Print given text to AA-lib output buffers.  To see the effect you need
+to call aa_flush too.
+
+
+File: aalib.info,  Node: aa_putpixel,  Next: aa_puts,  Prev: aa_printf,  Up: Reference
+
+aa_putpixel
+===========
+
+     #include <aalib.h>
+
+
+     void aa_putpixel
+     (
+         aa_context *c,
+         int x,
+         int y,
+         int color
+     );
+
+Parameters
+==========
+
+    `aa_context *c'
+          Specifies the AA-lib context to operate on.
+
+    `int x'
+          X coordinate.
+
+    `int y'
+          Y coordinate.
+
+    `int color'
+          Palette index or brightness value (0..255).
+
+Description
+===========
+
+Put pixel to emulated framebuffer.
+
+
+File: aalib.info,  Node: aa_puts,  Next: aa_recommendhidisplay,  Prev: aa_putpixel,  Up: Reference
+
+aa_puts
+=======
+
+     #include <aalib.h>
+
+
+     void aa_puts
+     (
+         aa_context *c,
+         int x,
+         int y,
+         enum aa_attribute attr,
+         const char *s
+     );
+
+Parameters
+==========
+
+    `aa_context *c'
+          Specifies the AA-lib context to operate on.
+
+    `int x'
+          X coordinate of the first character.
+
+    `int y'
+          Y coordinate of the first character.
+
+    `enum aa_attribute attr'
+          Attribute to use.
+
+
+          Possible values for an `enum aa_attribute' are as follows:
+              `AA_NORMAL'
+                    Normal characters.
+
+              `AA_DIM'
+                    Dark characters.
+
+              `AA_BOLD'
+                    Bright characters.
+
+              `AA_BOLDFONT'
+                    Characters rendered in bold font.
+
+              `AA_REVERSE'
+                    Reversed (black on whilte) characters.
+
+              `AA_SPECIAL'
+                    Render characters in a way easilly visible on the
+                    screen.  The exact rendering is driver dependent,
+                    but this mode ought to be used to output texts you
+                    want to make easilly visible in the image.
+
+    `const char *s'
+          String to output.
+
+Description
+===========
+
+Output given string to AA-lib output buffers.  To see the effect you
+need to call aa_flush too.
+
+
+File: aalib.info,  Node: aa_recommendhidisplay,  Next: aa_recommendhikbd,  Prev: aa_puts,  Up: Reference
+
+aa_recommendhidisplay
+=====================
+
+     #include <aalib.h>
+
+
+     void aa_recommendhidisplay(const char *name);
+
+Parameters
+==========
+
+    `const char *name'
+          Name of the driver (ought to match the "shortname" field of
+          the driver definition structure).
+
+Description
+===========
+
+Insert the given driver on beggining of the list of recommended display
+drivers.
+
+
+File: aalib.info,  Node: aa_recommendhikbd,  Next: aa_recommendhimouse,  Prev: aa_recommendhidisplay,  Up: Reference
+
+aa_recommendhikbd
+=================
+
+     #include <aalib.h>
+
+
+     void aa_recommendhikbd(const char *name);
+
+Parameters
+==========
+
+    `const char *name'
+          Name of the driver (ought to match the "shortname" field of
+          the driver definition structure).
+
+Description
+===========
+
+Insert the given driver on beggining of the list of recommended
+keyboard drivers.
+
+
+File: aalib.info,  Node: aa_recommendhimouse,  Next: aa_recommendhi,  Prev: aa_recommendhikbd,  Up: Reference
+
+aa_recommendhimouse
+===================
+
+     #include <aalib.h>
+
+
+     void aa_recommendhimouse(const char *name);
+
+Parameters
+==========
+
+    `const char *name'
+          Name of the driver (ought to match the "shortname" field of
+          the driver definition structure).
+
+Description
+===========
+
+Insert the given driver on beggining of the list of recommended mouse
+drivers.
+
+
+File: aalib.info,  Node: aa_recommendhi,  Next: aa_recommendlowdisplay,  Prev: aa_recommendhimouse,  Up: Reference
+
+aa_recommendhi
+==============
+
+     #include <aalib.h>
+
+
+     void aa_recommendhi
+     (
+         aa_linkedlist **l,
+         const char *name
+     );
+
+Parameters
+==========
+
+    `aa_linkedlist **l'
+          List to operate on (aa_displayrecommended, aa_kbdrecommended
+          or aa_mouserecommended).
+
+    `const char *name'
+          Name of the driver (ought to match the "shortname" field of
+          the driver definition structure).
+
+Description
+===========
+
+Insert the given driver on beggining of the list of recommended drivers.
+
+
+File: aalib.info,  Node: aa_recommendlowdisplay,  Next: aa_recommendlowkbd,  Prev: aa_recommendhi,  Up: Reference
+
+aa_recommendlowdisplay
+======================
+
+     #include <aalib.h>
+
+
+     void aa_recommendlowdisplay(const char *name);
+
+Parameters
+==========
+
+    `const char *name'
+          Name of the driver (ought to match the "shortname" field of
+          the driver definition structure).
+
+Description
+===========
+
+Add the given driver to the end of list of display recommended drivers.
+
+
+File: aalib.info,  Node: aa_recommendlowkbd,  Next: aa_recommendlowmouse,  Prev: aa_recommendlowdisplay,  Up: Reference
+
+aa_recommendlowkbd
+==================
+
+     #include <aalib.h>
+
+
+     void aa_recommendlowkbd(const char *name);
+
+Parameters
+==========
+
+    `const char *name'
+          Name of the driver (ought to match the "shortname" field of
+          the driver definition structure).
+
+Description
+===========
+
+Add the given driver to the end of list of keyboard recommended drivers.
+
+
+File: aalib.info,  Node: aa_recommendlowmouse,  Next: aa_recommendlow,  Prev: aa_recommendlowkbd,  Up: Reference
+
+aa_recommendlowmouse
+====================
+
+     #include <aalib.h>
+
+
+     void aa_recommendlowmouse(const char *name);
+
+Parameters
+==========
+
+    `const char *name'
+          Name of the driver (ought to match the "shortname" field of
+          the driver definition structure).
+
+Description
+===========
+
+Add the given driver to the end of list of mouse recommended drivers.
+
+
+File: aalib.info,  Node: aa_recommendlow,  Next: aa_registerfont,  Prev: aa_recommendlowmouse,  Up: Reference
+
+aa_recommendlow
+===============
+
+     #include <aalib.h>
+
+
+     void aa_recommendlow
+     (
+         aa_linkedlist **l,
+         const char *name
+     );
+
+Parameters
+==========
+
+    `aa_linkedlist **l'
+          List to operate on (aa_displayrecommended, aa_kbdrecommended
+          or aa_mouserecommended).
+
+    `const char *name'
+          Name of the driver (ought to match the "shortname" field of
+          the driver definition structure).
+
+Description
+===========
+
+Add the given driver to the end of list of recommended drivers.
+
+
+File: aalib.info,  Node: aa_registerfont,  Next: aa_render,  Prev: aa_recommendlow,  Up: Reference
+
+aa_registerfont
+===============
+
+     #include <aalib.h>
+
+
+     int aa_registerfont(const struct aa_font *f);
+
+Parameters
+==========
+
+    `const struct aa_font *f'
+          Font specification structure.
+
+Description
+===========
+
+Add new font specification to aa_fonts array.
+
+Return value
+============
+
+1 when succesfull or 0 on failure.
+
+
+File: aalib.info,  Node: aa_render,  Next: aa_resizehandler,  Prev: aa_registerfont,  Up: Reference
+
+aa_render
+=========
+
+     #include <aalib.h>
+
+
+     void aa_render
+     (
+         aa_context *c,
+         const aa_renderparams *p,
+         int x1,
+         int y1,
+         int x2,
+         int y2
+     );
+
+Parameters
+==========
+
+    `aa_context *c'
+          Specifies the AA-lib context to operate on.
+
+    `const aa_renderparams *p'
+          Rendering parametters used to specify brightness, gamma
+          correction and other usefull stuff. Use aa_defrenderparams
+          for default values.
+
+    `int x1'
+          Column of top left coner of rendered area (in characters!).
+
+    `int y1'
+          Row of top left coner of rendered area.
+
+    `int x2'
+          Column of bottom right coner of rendered area.
+
+    `int y2'
+          Row of bottom right coner of rendered area.
+
+Description
+===========
+
+This function does the trick of converting the emulated framebuffer
+into high quality ASCII-art. If you want to be really fast, you might
+use aa_fastrender.  If you want to emulate palette, use
+aa_renderpalette.
+
+   Note that to see the effect you need to call aa_flush too.
+
+   First call to this function may take a while, because the rendering
+tables are produced.
+
+
+File: aalib.info,  Node: aa_resizehandler,  Next: aa_resize,  Prev: aa_render,  Up: Reference
+
+aa_resizehandler
+================
+
+     #include <aalib.h>
+
+
+     void aa_resizehandler
+     (
+         aa_context *c,
+         void (*handler)(aa_context *)
+     );
+
+Parameters
+==========
+
+    `aa_context *c'
+          Specifies the AA-lib context to operate on.
+
+    `void (*handler)(aa_context *)'
+          Function to be called when resize happends.
+
+Description
+===========
+
+Set user handler to be called on resize event.
+
+
+File: aalib.info,  Node: aa_resize,  Next: aa_scrheight,  Prev: aa_resizehandler,  Up: Reference
+
+aa_resize
+=========
+
+     #include <aalib.h>
+
+
+     int aa_resize(aa_context *c);
+
+Parameters
+==========
+
+    `aa_context *c'
+          Specifies the AA-lib context to operate on.
+
+Description
+===========
+
+Do resize action. This function ought to be called when application
+takes into account the AA_RESIZE event.  The context is reinitialized
+and set to new sizes.
+
+Return value
+============
+
+0 when no resizing is done and 1 when resizing was succesfull.
+
+
+File: aalib.info,  Node: aa_scrheight,  Next: aa_scrwidth,  Prev: aa_resize,  Up: Reference
+
+aa_scrheight
+============
+
+     #include <aalib.h>
+
+
+     int aa_scrheight(aa_context *a);
+
+Parameters
+==========
+
+    `aa_context *a'
+          Specifies the AA-lib context to operate on.
+
+Description
+===========
+
+Returns height of the output screen in characters.
+
+
+File: aalib.info,  Node: aa_scrwidth,  Next: aa_setfont,  Prev: aa_scrheight,  Up: Reference
+
+aa_scrwidth
+===========
+
+     #include <aalib.h>
+
+
+     int aa_scrwidth(aa_context *a);
+
+Parameters
+==========
+
+    `aa_context *a'
+          Specifies the AA-lib context to operate on.
+
+Description
+===========
+
+Returns width of the output screen in characters.
+
+
+File: aalib.info,  Node: aa_setfont,  Next: aa_setsupported,  Prev: aa_scrwidth,  Up: Reference
+
+aa_setfont
+==========
+
+     #include <aalib.h>
+
+
+     void aa_setfont
+     (
+         aa_context *c,
+         const struct aa_font *font
+     );
+
+Parameters
+==========
+
+    `aa_context *c'
+          Specifies the AA-lib context to operate on.
+
+    `const struct aa_font *font'
+          Font specification structure.
+
+Description
+===========
+
+Set font specification to be used by rendering functions.
+
+
+File: aalib.info,  Node: aa_setsupported,  Next: aa_showcursor,  Prev: aa_setfont,  Up: Reference
+
+aa_setsupported
+===============
+
+     #include <aalib.h>
+
+
+     void aa_setsupported
+     (
+         aa_context *c,
+         int supported
+     );
+
+Parameters
+==========
+
+    `aa_context *c'
+          Specifies the AA-lib context to operate on.
+
+    `int supported'
+          New mask of requested features. Can contain AA_EXTENDED to
+          enable use of all 256 characters and AA_EIGHT to enable use
+          of the character numbered higher than 127.
+
+Description
+===========
+
+This function can be used to alter "supported" field of hardware-params
+structure used by AA-lib.
+
+
+File: aalib.info,  Node: aa_showcursor,  Next: aa_showmouse,  Prev: aa_setsupported,  Up: Reference
+
+aa_showcursor
+=============
+
+     #include <aalib.h>
+
+
+     void aa_showcursor(aa_context *c);
+
+Parameters
+==========
+
+    `aa_context *c'
+          Specifies the AA-lib context to operate on.
+
+Description
+===========
+
+Show the hardware cursor.  This function may not be ignored by some
+drivers.
+
+
+File: aalib.info,  Node: aa_showmouse,  Next: aa_text,  Prev: aa_showcursor,  Up: Reference
+
+aa_showmouse
+============
+
+     #include <aalib.h>
+
+
+     void aa_showmouse(aa_context *c);
+
+Parameters
+==========
+
+    `aa_context *c'
+          Not Documented.
+
+Description
+===========
+
+Show the mouse cursor.  This function may be ignored by some drivers.
+
+
+File: aalib.info,  Node: aa_text,  Next: aa_uninitkbd,  Prev: aa_showmouse,  Up: Reference
+
+aa_text
+=======
+
+     #include <aalib.h>
+
+
+     char *aa_text(aa_context *a);
+
+Parameters
+==========
+
+    `aa_context *a'
+          Specifies the AA-lib context to operate on.
+
+Description
+===========
+
+The text output buffer is simple array of characters specifying the
+ascii-value of the characters.  The array is organizated in the
+aa_scrheight (a) rows of aa_scrwidth(a) characters.
+
+Return value
+============
+
+Pointer the text output buffer used by AA-lib.
+
+
+File: aalib.info,  Node: aa_uninitkbd,  Next: aa_uninitmouse,  Prev: aa_text,  Up: Reference
+
+aa_uninitkbd
+============
+
+     #include <aalib.h>
+
+
+     void aa_uninitkbd(aa_context *context);
+
+Parameters
+==========
+
+    `aa_context *context'
+          Specifies the AA-lib context to operate on.
+
+Description
+===========
+
+Calls "uninitialize" function of the keyboard driver. It ought to undo
+all actions done by "initialize" function.
+
+
+File: aalib.info,  Node: aa_uninitmouse,  Next: mem_d,  Prev: aa_uninitkbd,  Up: Reference
+
+aa_uninitmouse
+==============
+
+     #include <aalib.h>
+
+
+     void aa_uninitmouse(aa_context *context);
+
+Parameters
+==========
+
+    `aa_context *context'
+          Specifies the AA-lib context to operate on.
+
+Description
+===========
+
+Calls "uninitialize" function of the mouse driver. It ought to undo all
+actions done by "initialize" function.
+
+
+File: aalib.info,  Node: mem_d,  Next: save_d,  Prev: aa_uninitmouse,  Up: Reference
+
+mem_d
+=====
+
+     #include <aalib.h>
+
+
+     extern const struct aa_driver mem_d;
+
+Description
+===========
+
+Used to render ascii-art images into memory.  You might use this driver
+to render images into memory and then use your own routines to handle
+them in case you want to avoid AA-lib's output mechanizms.
+
+
+File: aalib.info,  Node: save_d,  Prev: mem_d,  Up: Reference
+
+save_d
+======
+
+     #include <aalib.h>
+
+
+     extern const struct aa_driver save_d;
+
+Description
+===========
+
+Initialize this driver using aa_init function and specify the driver
+dependent parameters in aa_savedata structure to save image into file.
+See the texinfo documentation for details.
+

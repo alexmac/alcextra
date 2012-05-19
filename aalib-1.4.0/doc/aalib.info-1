@@ -1,0 +1,1081 @@
+This is aalib.info, produced by makeinfo version 4.0 from aalib.texinfo.
+
+INFO-DIR-SECTION Libraries
+START-INFO-DIR-ENTRY
+* AA-lib: (aalib).              An ASCII-art graphics library
+END-INFO-DIR-ENTRY
+
+   (C) 1997 Jan Hubicka & Kamil Toman
+
+   Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+
+File: aalib.info,  Node: Top,  Next: Overview,  Prev: (dir),  Up: (dir)
+
+AA-lib 1.4
+**********
+
+                                                   An ascii-art library
+                                                        API DESCRIPTION
+                                                           Apr 17, 2001
+
+* Menu:
+
+* Overview::		What does this software do then ?
+* AA-Project::		You want join ?
+* Skeleton::		AA-lib program skeleton::
+* Initialization::	How to start up AA-lib?
+* Drawing image::	How to draw image?
+* Rendering::		Rendering of image into ascii-art
+* Flushing::		Flushing into screen and text output functions
+* Keyboard::		Handling keyboard
+* Mouse::		Handling mouse
+* Resizing::		Resizing of display
+* Other functions::	Functions that was not documented yet.
+* Designing new driver::How to port AA-lib to new platform
+* Reference::		All AA-lib functions and variables.
+* Index::		Index of functions, types, macros and constants
+
+
+
+                              .,.  _.    .
+                           .%qwmy1(/.  .
+                         _x]WWWK1==s,<aaa,=  .
+                    .  ,jwdWWW#oa=%+{3WBW#oa>_,-
+                    `.amWWWWWZ13x|:=|{?W#Ee==++=_
+                   _jmWBWWWB}l=:;:.<%|!??+;- ~.;==,
+                 _ud$WWWW#Xecc_|=-::<3{~ .  . .. ;::_
+                ++|>{?+X*bSx%>`=: ..-<:-. .  .   -:==i,
+              ....:`---+|+{S=..-=:...= `       .....-<?;.
+               -. . ...__=:--..  - . ..      .  . :-<=>|:.
+                   ..  .--  . ..::;:=:+.  . . .._--;<nx>=:
+                 .        .:;==|=|=|||:: .......:<,=.=:+==.
+                     .. .::==|||iilxil|;::_=:+::=<(-+==.  -
+                    .: .:;==+|<illvivnxs==<:~=. --:.. . ..
+                     . .::==|+|iilIvvnnns|..:=.  .  .  :... .   .
+                       .:;=+||ixxxnvxnnnon> ;)s         .--`__,:-
+                       -:==|+|xoS2oo22ooX2Xa,.^x.    i.     -~~
+                  .   .::;===+|I12SSnnSXSXmX#s, +,.  -`
+                  .. --  . ----+++|||II}**!!!!|> '....,  .,.
+                 .::.. .        ..-:===::.    :=%i<j#me. ][
+                 .-::.- . .   ..  .:xwmo(._ ` s,:|3WmQk;.d
+             :.  ..:;;::....... ...=3m#Bm%~=<3UWBWWWWW#.)h
+             :=.  :;;:;:;;::.......=X#WWWWQmmmmBWWWWWWF`jf
+              -= .:;==;;;;:::::....=dmWWWBmWWWWWWWWWWW[jQ[
+                 ..:;;:::;;=::....;)X#WWWm>3XWWWWWWWW#??
+                  ...:-:::::... . .:+*Y?YXo=|3XWWWWBW[
+                  .....:...........:.=nZmWms;=IX#####
+                  .............:-~+1s%X#####2s<nXZ##P
+                   .....:.. . .  .___=aaa_a_%<2Z####`
+                 __;...............-+inXZBm#ZoZm#m#s_,   - .
+        _   .%uoon=.  ...:-:.:.--;<xaudmZmWmmm###mmBQQQmw..|=__
+     /?'.....XXSnx..........:::::=ln#WWmWWWWW#XXWWWWWWWWe.|==|:iT
+     ...c    )Xon>...... ........:+*1SX####XSommWWWWWWW[.+=:=:s%=
+     QQQWL..  -{1;...:.-..  . .......--+<ixnS#mWWWWWWY`:=+:;=mWWQ
+     WWWWWb.. . -:....:.:...... ......:|%nXZm#WWWWW?=::=;;:<mWWWW
+     ^-- . . .    ......-.... .... .:=ixnXX##mWBE?-:-:::::|>=i+==
+     . . .  . .      . .......... -:=+lxSXXZ#Z?`.:::::.:==::===;=
+      . . .. . ..       . . .    ...:=|lvn}!...:.....:==<|:<|saaw
+     QWQWQQWQWm#Qwa_,      .. .... .:;~~ .......:=sawwWWWWWQWWWWW
+     
+                   Honza Hubicka <hubicka@freesoft.cz>
+     
+     
+                          _a,an}|^-=-:._._
+                       .aJ#XS*||:::--::;=>=|_.
+                    ._JZSo1|+:;;:::.:.:=||===:..
+                   _=nn31}=,==:..::.:::__=====;...
+                  .=+"!+i%*+==::-:;=<;==+<+==..
+                 .. .__|+~_;>`. . ..:===|:==-; .
+                   .--~-~~...-- ..:.;::+====>==_ .
+                       .. : .  ....-+|;-:=<i=::,_.
+                      . .        ..==|l|==+:;|=i:.       .
+                              . ..-:+|>+li===|!+:...     :.
+                            .  ...:::i||iixi|==;=|_._.. ..;
+                          . ...:.==|ixxunnns%iiaoouis%,=:==
+                         . ....:==iiv22XXXZZ#ZmZXXXdupoz=<>
+                      ........::=|ilvn2S2ZZ#####ZZZXZ#Xx=u>.
+                    . . . . .-:;=iill11X2X#m###mmZXzIl>{`I`;
+                     ... ..-::;=|||illvv3XXXXXX#XmoS;==::-..
+                    .   . ...=====|i|||+"""~~++*1SoXs,-::...
+                          ......---===;.  ..:=|i>"{2S( ;_</|
+                                 .:::=;=     ,.--+`"`=%)d#(;
+             . .    . .           ...;i>....--+._=us_J1s.+s;
+              -.  .. . .  .       :{m, =|::::==xxoXzXonX(:x(
+              ...  ` ..... . .   .:xZXc`|||=||ln2ZX'Snvc<oS(
+              ..  . `........  . .={SXXb/~|i|iixn}\non1XXXr
+               ..  .    .    .   .;{2ZXS21,____%xonnnxiSX'
+                    . ........   .:<v**X1IIxoo2nnonvvx=
+                      . . .. . .   :Isxunos%lxnonn1vvl;
+                       . .  . .  ....InSoonIixnxvnvIl>
+                      .   . .  ..:l=.innnn1xIiixnIIIl'
+                         .           . _.:.-|linxvl|`
+                            .      -~-++iii|iivvl|||
+                               . ....__|ixxxIvIi=|Il
+                            . . .::=|i%nnonnvI+=v1nl
+                                ...:=|Innn1}+||vvnvv;
+                                  ....:+++=xivvnnnno> .
+                                     .:;=ivvnnvvno2o` .   ..
+                ..:        .          :=+|iIxvnvo2e';,. ...:<+:.
+            ...--             .      ..==iivlvIn1".|=:;.. . . -::
+        .::.                        ...=|iliIli~ =|`:<:/.. .. .
+     n;:  .                       .   .::=|+~       :=+;;:.: :
+     
+     	      Kamil Toman <toman@artax.karlin.mff.cuni.cz>
+
+
+File: aalib.info,  Node: Overview,  Next: AA-Project,  Prev: Top,  Up: Top
+
+Overview
+********
+
+* Menu:
+
+* Why?::		Why such library?
+* What?::		What does this software do then?
+* History::		How this all started?
+
+
+File: aalib.info,  Node: Why?,  Next: What?,  Prev: Overview,  Up: Overview
+
+Why such library?
+=================
+
+   I vote for simplicity. There are many problems of various kinds with
+video cards, low frequency monitors, crashing graphical apps... AA-lib
+IS the solution. It works on a terminal of any kind, it is fast and
+portable, it gives to you standard API. It gives to your old hardware
+more power!
+
+
+File: aalib.info,  Node: What?,  Next: History,  Prev: Why?,  Up: Overview
+
+What does this software do then ?
+=================================
+
+   AA-lib is a low level gfx library just as many other libraries are.
+The main difference is that AA-lib does not require graphics device. In
+fact, there is no graphical output possible. AA-lib replaces those
+old-fashioned output methods with powerful ascii-art renderer. Now my
+linux boots with a nice penguin logo at secondary display (yes! Like
+Win95 does:) AA-lib API is designed to be similar to other graphics
+libraries. Learning a new API would be a piece of cake!
+
+
+File: aalib.info,  Node: History,  Prev: What?,  Up: Overview
+
+How this all started
+====================
+
+   Once upon a time we've (my friend Kamil and I) bought two old
+Herculeses as secondary monitors. We didn't know for that time that our
+Diamond Stealths 64 cards would become obsolete soon. The next day we
+downloaded the logo of Linux Texas Users Group - nice silly penguin
+looking like a cowboy! It was so exciting logo ... we decided that we
+couldn't live without it and we wanted to see it at boot time as a logo
+on our secondary monitors. There was a small problem - Hercules doesn't
+support color graphics. So we decided to convert the penguin image to
+ascii art using netpbm tools.
+
+   The output was very ugly because the converting algorithm was
+absolutly stupid.  During the night I designed a new convertor that
+used a font bitmap to create an aproximation table. The output wasn't
+very good since the algorithm wasn't tuned so well. Many months this
+small piece of code was waiting on my disc for the day "D". Meanwhile I
+started a new project XaoS (a fractal zoomer) with my friend Thomas.
+And then I got an idea: Ascii Art Mandelbrots!  I was really impressed
+by the result! XaoS was faster, portable and looking much better than
+ever before. I found a new way to go ...
+
+
+File: aalib.info,  Node: AA-Project,  Next: Skeleton,  Prev: Overview,  Up: Top
+
+AA-Project
+**********
+
+                               dT8  8Tb
+                              dT 8  8 Tb
+                             dT  8  8  Tb
+                          <PROJECT><PROJECT>
+                           dT    8  8    Tb
+                          dT     8  8     Tb
+   Three goals of AA-Project:
+
+  1. Port all important software (like Doom, Second Reality, X windows
+     etc..)  on AA-lib.
+
+  2. Port AA-lib on all available platforms (mainly ZX-Spectrum and
+     Sharp).
+
+  3. Force IBM to start manufacturing MDA cards again.
+
+   AA-project was started by Jan Hubicka. In that times just a few
+people knew about it. Then a new demo named BB has been relased to show
+the power of AA-lib technology. Now the project is freely available and
+anyone can help.
+
+   Just join our mailing list:
+`aa-project-discuss@lists.sourceforge.net'.
+
+   Or just browse our homepage at `http://aa-project.sourceforge.net'.
+A ton of examples of ascii-art generated by aalib, pointers to other
+AA-Project resources etc.
+
+
+File: aalib.info,  Node: Skeleton,  Next: Initialization,  Prev: AA-Project,  Up: Top
+
+AA-lib program skeleton
+***********************
+
+   Following piece of code you may want to use as base for your future
+AA-lib program:
+
+     #include <aalib.h>
+     int
+     main (int argc, char **argv)
+     {
+       aa_context *context;       /* The information about currently
+       				initialized device.  */
+       aa_palette palette;        /* Emulatted palette (optional) */
+     
+       char *framebuffer;
+     
+       /* Parse command line options and output the help text.  */
+       if (!aa_parseoptions (NULL, NULL, &argc, argv) || argc != 1)
+         {
+           printf ("%s", aa_help);
+           exit (1);
+         }
+     
+       /* Initialize output driver.  */
+       context = aa_autoinit (&aa_defparams);
+       if (context == NULL)
+         {
+           printf ("Failed to initialize aalib\n");
+           exit (1);
+         }
+     
+       /* Pointer to the emulated videoram.  */
+       framebuffer = aa_image (context);
+     
+     
+       /* Create palette if needed: */
+       for (i = 0; i < 256; i++)
+         aa_setpalette (palette, i, /* R value 0..255 */ ,
+                                    /* G value 0..255 */ ,
+                                    /* B value 0..255 */ );
+     
+       /* Draw something using: */
+       aa_putpixel (context, /* X coord */ , /* Y coord */ , /* Color */ );
+     
+       /* Render whole screen: */
+     
+       aa_renderpalette (context, palette, aa_defrenderparams,
+     		    /* Top left conner of rendered area: */ 0, 0,
+     		    /* Bottom right */  aa_scrwidth (context), aa_scrheight (context));
+     
+       /* If you don't use palette use following function:
+       aa_render (context, aa_defrenderparams,
+                  0, 0, aa_scrwidth (context), aa_scrheight (context));
+       */
+     
+       /* And make it visible: */
+       aa_flush (context);
+     
+       /* And uninitialize the AA_lib (this probably makes the picture invisible
+          again) */
+       aa_close (context);
+     
+       return 1;
+     }
+
+
+File: aalib.info,  Node: Initialization,  Next: Drawing image,  Prev: Skeleton,  Up: Top
+
+Initialization
+**************
+
+   It is possible to initialize AA-lib in various modes.  The main
+initialization is done by following `aa_init'
+
+     aa_context *aa_init(struct aa_driver *DRIVER,
+                         struct aa_hardware_params *DEFPARAMS,
+                         void *DRIVERDATA)
+
+   This function prepares `aa_context *' type variable used by all
+AA-lib functions. The DRIVER parameter specifies hardware driver to
+initialize, DEFPARAMS parameters of hardware you require and DRIVERDATA
+is used to pass implementation dependent extra information to the
+hardware driver.
+
+   To undo all actions done by `aa_init' function, call `aa_close':
+
+     aa_close(aa_context *CONTEXT)
+
+   This function frees allocated memory for `aa_context' and call's
+unintialize function of the output drivers.
+
+   Initializing AA-lib directly is non-trivial task. Many display
+drivers and modes are available. Several helper functions are provided
+to do this job for you.
+
+   You may want initialize AA-lib in one of the following modes:
+
+* Menu:
+
+* Initialization as a normal graphics library::
+* Initialization as an ascii art renderer::
+* Initialization for image saving::
+* Specifying hardware parameters::
+
+
+File: aalib.info,  Node: Initialization as a normal graphics library,  Next: Initialization as an ascii art renderer,  Prev: Initialization,  Up: Initialization
+
+Initialization as normal graphics library
+=========================================
+
+   If you initialize AA-lib as a normal graphics library you can use one
+of available hardware drivers. It initializes a display device and sets
+the output to the screen. Hardware drivers depend on a platform you are
+running at, configuration of your computer and many other things.
+Typically more than one driver is available. AA-lib can make the
+decision for you if you use `aa_autoinit' function:
+
+     aa_context *aa_autoinit(struct aa_hardware_params *PARAMS)
+
+   This function initializes the hardware driver and returns
+`aa_context' structure used by other functions.  `NULL' is returned on
+failure.  Parameter PARAMS is used to specify hardware parameters you
+require.
+
+* Menu:
+
+* Easy initialization of AA-lib::
+* Parsing of command line options::
+* How does the autodetection work::
+* Recommending drivers::
+
+
+File: aalib.info,  Node: Easy initialization of AA-lib,  Next: Parsing of command line options,  Prev: Initialization as a normal graphics library,  Up: Initialization as a normal graphics library
+
+Easy initialization of AA-lib
+-----------------------------
+
+   Following example is the most trivial way to initialize AA-lib.
+
+     #include <stdio.h>
+     #include <aalib.h>
+     aa_context *context;
+     void main(void)
+     {
+       aa_parseoptions (NULL, NULL, NULL, NULL);
+     
+           /* Every AA-lib program ought to call the aa_perseoptions at least
+              in this way to make the AAOPTS environment variable work.  */
+     
+       context = aa_autoinit(&aa_defparams);
+       if(context == NULL) {
+         fprintf(stderr,"Cannot initialize AA-lib. Sorry\n");
+         exit(1);
+       }
+       ...
+       aa_close(context);
+     }
+
+   This code will do all autodetection/initialization stuff for you and
+it will fire up AA-lib (using default parameters). Because AA-lib
+supports output driver using ordinarry stdio functions, the failure is
+very unlikely, but you ought to check it.
+
+
+File: aalib.info,  Node: Parsing of command line options,  Next: How does the autodetection work,  Prev: Easy initialization of AA-lib,  Up: Initialization as a normal graphics library
+
+Parsing of command line options
+-------------------------------
+
+   AA-lib works at many different output devices so it can be
+initialized with many different options. Somebody might want to change
+the defaults.  This can be done using command line options.  This is
+done using function `aa_parseoptions' that uses `argc/argv' variables
+and parses options for AA-lib. The options for AA-lib are removed
+during parsing from `argc/argv' so call to aa_parseoptions can preceede
+the normal command line options parsing code done by your program.
+`aa_help' variable contains help about options parsed by
+`aa_parseoptions'.
+
+     int aa_parseoptions(aa_hardwareparams *P,
+                         aa_renderparams *R,
+                         int *ARGC, char **ARGV);
+
+   First parameter is used for AA-lib initialization. It specifies the
+hardware parameters you require and is altered by `aa_parseoptions'. It
+is expected that your program will define his prefered parameters
+first, call `aa_parseoptions' and then alter it only when necessary to
+make program working correctly. If you don't brother about the hardware
+specification, you may use `aa_defparams' variable in both places (here
+and as passed to `aa_init' function familly).  You may also pass NULL
+to use defaults (aa_defparams variable).
+
+   The second argument is set of parameters for rendering. It works in
+similar way as the first parameters. Both of this variables will be
+explained later. Use NULL to force defaults (aa_defrenderparams).
+Fuction returns: `1' if OK or `0' on error.
+
+   The function returns 1 on sucess and 0 on failure.
+
+     #include <stdio.h>
+     #include <aalib.h>
+     aa_context *context;
+     void main(int argc, char **argv)
+     {
+       if(!aa_parseoptions(NULL, NULL, &argc, argv) || argc!=1) {
+         printf("Usage: %s [options]\n"
+                "Options:\n"
+                "%s", argv[0], aa_help);
+         exit(1);
+       }
+       context = aa_autoinit(&aa_defparams);
+       if(context == NULL) {
+         fprintf(stderr,"Cannot initialize AA-lib. Sorry\n");
+         exit(2);
+       }
+       ...
+       aa_close(context);
+     }
+
+   Note that options are parsed from command line and also from
+`AAOPTS' enviroment variable. This makes possible to set parameters for
+all AA-Lib programs. If you pass `NULL' as `argc/argv' only the
+enviroment variable is parsed.
+
+   Variable `aa_help' contains help string similiar to this one:
+       -driver        select driver
+                       available drivers:linux slang X11
+       -kbddriver     select keyboard driver
+                       available drivers:slang X11
+       -kbddriver     select mouse driver
+                       available drivers:X11 gpm
+     Size options:
+       -width         set width
+       -height        set height
+       -minwidth      set minimal width
+       -minheight     set minimal height
+       -maxwidth      set maximal width
+       -maxheight     set maximal height
+       -recwidth      set recomended width
+       -recheight     set recomended height
+     Attributes:
+       -dim           enable usage of dim (half bright) attribute
+       -bold          enable usage of bold (double bright) attribute
+       -reverse       enable usage of reverse attribute
+       -normal        enable usage of normal attribute
+       -boldfont      enable usage of boldfont attrubute
+       -no<attr>      disable (i.e -nobold)
+     
+     Font rendering options:
+       -extended      use all 256 characters
+       -eight         use eight bit ascii
+       -font <font>   select font(This option have effect just on hardwares
+                      where aalib is unable to determine current font
+                       available fonts:vga8 vga9 mda14 vga14 X8x13 X8x16
+                       X8x13bold vgagl8 line
+     
+     Rendering options:
+       -inverse       enable inverse rendering
+       -noinverse     disable inverse rendering
+       -bright <val>  set bright (0-255)
+       -contrast <val>set contrast (0-255)
+       -gamma <val>   set gamma correction value(0-1)
+     
+     Ditherng options:
+       -nodither      disable dithering
+       -floyd_steinberg floyd steinberg dithering
+       -error_distribution error distribution dithering
+       -random <val>  set random dithering value(0-inf)
+
+
+File: aalib.info,  Node: How does the autodetection work,  Next: Recommending drivers,  Prev: Parsing of command line options,  Up: Initialization as a normal graphics library
+
+How does the autodetection work
+-------------------------------
+
+   To fully understand customizing of `aa_autoinit' you have to know
+(at least something) how does the autodetection work.
+
+   All hardware drivers are stored in `aa_drivers' array -- array of
+pointers to drivers terminated by `NULL' pointer. Order is significant.
+First driver is tested before the second etc.
+
+   It is possible to customize your own order of drivers. This can be
+done using `aa_displayrecomended' list. It's a double linked list of
+strings that are interpreted as names of drivers. These drivers are
+tested before `aa_drivers' is procesed. There are several reasons to do
+it this way.  Firstly, this "aditional" list is passed before the first
+of "standard array" drivers is used. Thus you can recommend the probing
+order of drivers in a very natural and comfortable way.  Second, this
+method reduces executable file size.  Third, you can prefer different
+drivers on different platforms with no aditional care about current
+configuration of AA-lib.
+
+
+File: aalib.info,  Node: Recommending drivers,  Prev: How does the autodetection work,  Up: Initialization as a normal graphics library
+
+Recommending drivers
+--------------------
+
+   Manipulation with recomended drivers (`aa_displayrecomended' list)
+can be done using macros:
+
+     aa_recomendhidisplay(NAME)
+     aa_recomendlowdisplay(NAME)
+
+   `aa_displayrecomended' is a cyclic list. You can easily add drivers
+to the begining (using `aa_recomendhidisplay(name)') or to the end
+using `aa_recomendlowdisplay(name)'.  In other words
+`aa_recomendhidisplay' inserts with "high priority".  (at the beggining
+of the list). The check for duplicity is performed.  Despite
+`aa_recomendhidisplay(name)', that moves an existing display to the
+begining, function `aa_recomendlowdisplay(name)' inserts to the end.
+Thus nothing can lower the required priority of your driver.
+
+   This two priorities are usefull in many situations. For example:
+many display drivers recomend keyboard or mouse drivers (it's a good
+idea use `curses' keyboard when `curses' display driver is used). But
+some users may want to change it -- for example they might want to
+drive an aplication from a script and they might want to use `stdin'
+keyboard driver instead of `X11' recomended by `X11' driver.
+
+   The following piece of code:
+
+     aa_recomendhidisplay ("testa1");
+     aa_recomendlowdisplay("teste1");
+     aa_recomendhidisplay ("testa2");
+     aa_recomendlowdisplay("teste2");
+     aa_recomendlowdisplay("teste1");
+     aa_recomendhidisplay ("teste1");
+
+   will produce the following list:
+
+     teste1, testa2, testa1, teste1 teste2
+
+   And autoprobing will first test in order all drivers on the lists
+(if such drivers exist in current AA-lib configuration) and then try
+all available drivers in the default order.
+
+
+File: aalib.info,  Node: Initialization as an ascii art renderer,  Next: Initialization for image saving,  Prev: Initialization as a normal graphics library,  Up: Initialization
+
+Initialization as an ascii art renderer
+=======================================
+
+   If you want to use just AA-lib's rendering routines but no output to
+screen (eg. you have your own output routines) you can use dummy memory
+driver.  It's named `mem_d' and it's initialization should look like
+this:
+
+      context = aa_init(MEM_D,&AA_DEFPARAMS,NULL);
+
+
+File: aalib.info,  Node: Initialization for image saving,  Next: Specifying hardware parameters,  Prev: Initialization as an ascii art renderer,  Up: Initialization
+
+Initialization for image saving
+===============================
+
+   AA-Lib also have a driver specialized for image saving. It's name is
+`save_d'(currently only driver that uses `aa_savedata' structure):
+
+     struct aa_savedata {
+           char *name;
+           struct aa_format *format;
+           FILE *file;
+     };
+
+   Field `name' contains a filename (without extension).  If you wish
+to specify file descriptor, you might want to use field `file' instead.
+Set `name' to `NULL' in this cases.  Note that then file will not be
+closed automatically. In `name' you should use following tags:
+`%x'
+     X coordinate of page, if pages enabled otherwise none
+
+`%y'
+     Y coordinate of page, if pages enabled otherwise none
+
+`%c'
+     Coordinates in format: `_%x_%y', if pages enabled otherwise none
+
+`%e'
+     Default extension (like `.html') `Format' is a pointer to
+`aa_format' structure (format information):
+
+     struct aa_format {
+           int width, height;        /*default width/height*/
+           int pagewidth, pageheight;/*in case output is made from pages*/
+           int flags;                /*should be made from:
+                                       AA_USE_PAGES
+                                       AA_NORMAL_SPACES
+                                     */
+           int supported;            /*mask of supported attributes*/
+           struct aa_font *font;     /*font used by hardware device*/
+           char *formatname;	        /*name of format*/
+           char *extension;          /*file extension*/
+           char *head;               /*text at the beggining of file*/
+           char *end;                /*text at the end of file*/
+           char *newline;            /*text at the end of line*/
+           char *prints[AA_NATTRS];  /*printf seqence for printing character*/
+           char *begin[AA_NATTRS];   /*text printed at the beggining of block
+                                       of character at gived attribute*/
+           char *ends[AA_NATTRS];    /*text printed at the end of block*/
+           char **conversions	/*conversion tabe*/
+     };
+
+   Conversions is array of strings in format: character, replacement,
+terminated by `NULL'.
+
+   Following code is an example of `HTML' format description:
+
+     static char *html_escapes[] = {"<", "&lt;", ">", "&gt;", "&", "&amp;", NULL};
+     
+     struct aa_format aa_html_format =
+     {
+           79, 25,
+           0, 0,
+           0,
+           AA_NORMAL_MASK | AA_BOLD_MASK | AA_BOLDFONT_MASK,
+           NULL,
+           "Pure html",
+           ".html",
+           "<HTML>\n <HEAD> <TITLE>Ascii arted image
+            done using aalib</TITLE>\n</HEAD>\n<BODY><PRE>\n",
+           "</PRE></BODY>\n</HTML>\n",
+           "\n",
+           /*The order is:normal, dim, bold, boldfont, reverse, special*/
+           { "%s", "%s", "%s", "%s", "%s", },
+           {"", "", "<B>", "", "<B>" },
+           {"", "", "</B>", "", "</B>" },
+           html_escapes
+     };
+
+   Usually you don't need to worry about filling in this large
+structure since the formats are already defined: `aa_nhtml_format',
+`aa_html_format', `aa_html_alt_format', `aa_ansi_format',
+`aa_text_format', `aa_more_format', `aa_hp_format', `aa_hp2_format',
+`aa_zephyr_format', `aa_irc_format'.  All formats are collected in
+`aa_formats' array. It is array of pointers to `aa_format' terminated
+by `NULL'
+
+   All additional new formats are welcomed.
+
+
+File: aalib.info,  Node: Specifying hardware parameters,  Prev: Initialization for image saving,  Up: Initialization
+
+Specifying hardware parameters
+==============================
+
+   In previous examples we used `aa_defparams' without description. This
+variable says to AA-lib what hardware do you expect.
+
+     struct aa_hardware_params {
+           struct aa_font *font;
+           int supported;
+           int minwidth, minheight;
+           int maxwidth, maxheight;
+           int recwidth, recheight;
+           int mmwidth, mmheight;
+           int width, height;
+     };
+
+   Filed `font' contains the default font. If your driver is unable to
+autodetect the font used by the output device (such as terminal drivers
+or most of saving drivers), you may want to select one of the fonts
+compiled into aalib.  Following fonts are available: `font8', `font14',
+`font16', `font9', `fontline', `fontgl', `fontX13', `fontX16',
+`fontX13B'.  If you specify `NULL' as an argument `font16' is used.
+
+   Integer `supported' contains a mask. Following masks are available:
+`AA_NORMAL_MASK', `AA_DIM_MASK', `AA_BOLD_MASK', `AA_BOLDFONT_MASK',
+`AA_REVERSE_MASK'.
+
+   You can use `AA_EXTENDED' to enable all 256 of characters or
+`AA_EIGHT' to enable using of characters numbered higher than 127. This
+should be set also after the initialization using `aa_setsupported'
+
+   Other fields are used to specify the display size. If your program
+requires a fixed size of the display you should set `width',`height'
+fields (otherwise expect problems ;).  You can also adjust how tolerant
+AA-lib should be. Minimum is set by `minwidth/minheight', maximum is
+set by `maxwidth/maxheight'.  Then you can set `width/height'
+parameters and call the init function.  The nearest value (in specified
+bounds `coz) will be set.
+
+   If all these fields are set to zero (default) hardware drivers
+prompt user for the size and memory/save drivers will set some
+defaults. Hardware drivers also have default values(forced by enter).
+If you wanted to modify them you'd have to set `recwidth/recheight'.
+Note that `minwidth/minheight' and `maxwidth/maxheight' still have an
+effect even if `width/height' is zero.
+
+   It is recomended to set all the parameters that can be alternated by
+user just before `aa_parseoptions' is called, so options can't be
+changed.
+
+   `mmwidth/mmheight' should be used to specify size of window in
+milimeters (but it is ignored by all drivers now ;).
+
+
+File: aalib.info,  Node: Drawing image,  Next: Rendering,  Prev: Initialization,  Up: Top
+
+How to draw an image?
+*********************
+
+   AA-lib emulates video-ram so it looks just like a plain memory. It
+contains `aa_imgheight (context)' lines of `aa_imgwidth(context)' bytes
+where each of them specifies a grayscale value or an index to a colormap
+(or graymap ?).  Pointer to this memory can be obtained using
+`aa_image(context)' macro.
+
+   Note that width and height of videoram differ from physical
+width/height of a device (stored in `aa_hardwareparams' variables).
+Currently it is twice bigger because every four pixels are rendered
+into one character.  Future versions should (possibly) support nine
+pixels.
+
+   There's nearly no difference in API between classical gfx libraries
+and AA-lib.  There are currently no higher level graphics functions.
+But AA-lib provides `aa_putpixel(context,x,y,color)' macro. There is no
+problem to make more complex functions. A great help to a potential
+programmer is the fact that AA-lib provides a colormap mode emulation.
+To set the palette you should use macro:
+
+     aa_setpalette(PALETTE, INDEX, RED, GREEN, BLUE)
+
+   Red, green and blue components are recalculated into super-grayscale.
+Values are in range 0-255 where 0 means black. You can also set
+directly value using something like:
+
+     palette[index]=value;
+
+   Another difference is that your aplication is expected to handle
+various imgwidth/imgheights (in case you didn't exacly specified them in
+hardwareparams during initialization). Also your aplication should take
+care for `aa_mmwidth(context)' and `aa_mmheight(context)' values that
+contain real size in millimeters of output device. You cannot simply
+expect that pixel has the same width and height as at normal graphics
+libraries.
+
+   Many old programs may require some scalling functions to convert
+images from their internal size (320x200) to AA-Lib real size.
+
+   Note that image WON'T be displayed on the screen unless it is
+rendered and FLUSHED !
+
+
+File: aalib.info,  Node: Rendering,  Next: Flushing,  Prev: Drawing image,  Up: Top
+
+Rendering of image into ascii-art
+*********************************
+
+   Once image is drawn it needs to be rendered. For this purpose three
+functions are provided:
+
+     void aa_fastrender(aa_context *C, int X1, int Y1, int X2, int Y2);
+     void aa_render(aa_context * C, aa_renderparams *P,
+                           int X1, int Y1, int X2, int Y2);
+     void aa_renderpalette(aa_context *C, aa_palette TABLE,
+                           aa_renderparams *P,
+                           int X1, int Y1, int X2, int Y2);
+
+   `x1', `y1', `x2', `y2' parameters specify Top left/bottom right
+corner of rendered rectangle. Note that these coordinates are SCREEN
+not IMAGE ones. So they can be twice smaller !!  Specify the range
+0...`aa_scrwidth(context)' or 0...`aa_scrheight(context)').  Please do
+NOT confuse them with image coords otherwise you'll get strange results!
+Note that the first call of our rendering function can take
+significantly more time becouse it pre-computes internal look-up tables.
+
+   Function `aa_fastrender' does very fast (but not as perfect)
+results. It is designed for aplications that prefers simplicity and
+speed to the quality of output.  Quick and easy way to use render
+routines is to call:
+
+     aa_fastrender(context, 0, 0, aa_scrwidth(context), aa_scrheight(context));
+
+   Function `aa_render' is a bit more complex than the previous one.
+It uses 256 colors instead of 16 ones and it has an extra parameter `p'.
+This parameter allows a control of its advanced features. It's a pointer
+to the following structure:
+
+     struct aa_renderparams {
+         int bright, contrast;
+         float gamma;
+         int dither;
+         int inversion;
+         int randomval;
+     };
+
+   Values `bright', `contrast', `gamma' let you control the quality of
+the output image. Brightness of range 0...255 and contrast 0...127;
+dither can be set to one of the following values:
+`AA_NONE'
+     disables dithering
+
+`AA_ERROR_DISTRIB'
+     enables error distribution dithering
+
+`AA_FLOYD_S'
+     enables floyd-steinberg dithering
+
+   Inversion enables/disables the inversion. Randomval can be used to
+control the random dithering. If randomval is non-zero a random value
+in range ( -randomval / 2 , ranomval / 2) is added to every pixel value
+before the rendering.  Note that this can be combined with all other
+ditherings too.
+
+   Function `aa_renderpalette' is similiar to `aa_render'. The only
+difference is that it lets you specify the palette.
+
+
+File: aalib.info,  Node: Flushing,  Next: Keyboard,  Prev: Rendering,  Up: Top
+
+Flushing into screen and text output functions
+**********************************************
+
+   We've written the whole charapter for small functions to get your
+attention.  None of them without flusing the image into screen will
+work. Once AA-lib is started, image drawn and rendered it needs to be
+finally displayed on the screen.  Yes! That's it! You have to flush the
+data (or you'll get a blank screen:).
+
+     void aa_flush(aa_context *C);
+
+   This function will update the screen due to the situation stored in
+text and attribute buffers. This buffers are filled by rendering but
+they may be also accesed directly. A pointer to them can be obtained by
+calling `aa_text(context)' or `aa_attrs(context)' macros.
+
+   The `aa_text' returns pointer to array representing text output
+buffer.  An "videroram-like" array represented in the same way as
+`aa_image' (with the screen, not image dimenstions) where each byte is
+ascii value of character to display.
+
+   The `aa_attrs' return pointer to array representing additional
+attribute for each character.  Attribute buffer can contain following
+values:
+`AA_NORMAL'
+     for normal characters
+
+`AA_BOLD'
+     for bold (double bright) characters
+
+`AA_DIM'
+     for dim (half bright) characters
+
+`AA_BOLDFONT'
+     for characters displayed using bold font
+
+`AA_REVERSE'
+     for reversed characters
+
+`AA_SPECIAL'
+     this can be used for displaying text over images. Its
+     implementation depends at driver. Most drivers implement it as a
+     white text on a blue background.
+
+   For more comfortable output you may use:
+
+     void aa_puts(aa_context *C, int X, int Y, int ATTR, char *S);
+     int aa_printf(aa_context *C, int X, int Y, int ATTR, char *FMT, ...);
+
+   It puts a string `s' (and atribute `attr') at coordinates `x', `y'.
+Note that it doesn't move the cursor nor flushes buffers to screen.  To
+move the cursor you have to use following function
+
+     void aa_gotoxy(aa_context *C, int X, int Y);
+
+   Some drivers can also support cursor hiding: `aa_hidecursor' or
+`aa_showcursor' functions.
+
+
+File: aalib.info,  Node: Keyboard,  Next: Mouse,  Prev: Flushing,  Up: Top
+
+Keyboard
+********
+
+   AA-lib provides a simple interface to keyboard. It helps to make
+aplications portable since the same keyboard interface is available on
+all platforms. On the other hand it is very "dumb" (who cares...wait
+till the next version).
+
+* Menu:
+
+* Initialization of keyboard::
+* Getting events::
+
+
+File: aalib.info,  Node: Initialization of keyboard,  Next: Getting events,  Prev: Keyboard,  Up: Keyboard
+
+Initialization
+==============
+
+   Keyboard interface needs to be initialized after display driver
+since the existence of aa_context is required. The following function
+is available for initializing:
+
+     int aa_autoinitkbd(struct aa_context *CONTEXT, int MODE);
+     int aa_initkbd(struct aa_context *CONTEXT,
+                    struct aa_kbddriver *DRV, int MODE);
+
+   The situation is very similiar to the initialization of hardware
+display drivers.  The meaning is almost the same. Mode variable can be
+set to zero for normal keyboard mode or to AA_SENDRELEASE that forces
+driver to inform you about keys releasing (currently, only a few
+drivers support this feature :().
+
+   You can recommend drivers:
+
+     aa_recomendhikbd(NAME);
+     aa_recomendlowkbd(NAME);
+
+   Close context or use
+
+     void aa_uninitkbd(struct aa_context *CONTEXT);
+
+   to uninitialize a keyboard driver.
+
+
+File: aalib.info,  Node: Getting events,  Prev: Initialization of keyboard,  Up: Keyboard
+
+Getting events
+==============
+
+   Once keyboard is up you should use following function to get the
+events:
+
+     int aa_getevent(aa_context *C, int WAIT);
+
+   if WAIT is set to 1 functions wait for an event otherwise they just
+peek for an event (and might return AA_NONE). Event can be:
+
+  1. ascii code of pressed key (value is lower than 255)
+
+  2. one of the following special keys: AA_UP, AA_DOWN, AA_LEFT,
+     AA_RIGHT, AA_BACKSPACE, AA_ESC
+
+  3. value higher or equal to AA_UNKNOWN but lower than AA_RELEASE
+     means unknown key.
+
+  4. two special events AA_MOUSE and AA_RESIZE (will be explained later)
+
+  5. higher value than AA_RELEASE means released key. To get keycode
+     use: `value &= ~AA_RELEASE'.
+
+
+   If you don't want to be informed about such strange events and if
+you want to know just about the keys use:
+
+     int aa_getkey(aa_context *C, int WAIT);
+
+
+File: aalib.info,  Node: Mouse,  Next: Resizing,  Prev: Keyboard,  Up: Top
+
+Mouse
+*****
+
+   AA-lib also provides a simple mouse interface. It needs to be
+initialized after the keyboard driver (and uninitialized before) since
+it uses it to report events. Its initialization is almost identical to
+keyboards (just replace kbd by mouse in function names). If you need
+more details read the keyboard section.
+
+   The only difference is mode parameter.  It says what kind of events
+you should be informed about.  It is a mask from the following fields:
+AA_MOUSEMOVEMASK, AA_MOUSEPRESSMASK and AA_PRESSEDMOVEMAKS.  Note that
+mouse driver should ignore this mask. Set it to AA_MOUSEALLMASK to
+enables all these events.
+
+   Mouse event is reported by AA_MOUSE value returned by `aa_getevent'
+function. Then the mouse possition can be obtained using:
+
+     void aa_getmouse(aa_context *C, int *X, int *Y, int *B);
+
+   `X' and `y' are reported in screen coordinates (not image ones).
+`B' contains state of buttons (AA_BUTTON1, AA_BUTTON2, AA_BUTTON3).
+
+     void aa_hidemouse(aa_context *C);
+     void aa_showmouse(aa_context *C);
+
+   This functions should be used to hide/show mouse cursor.
+
+
+File: aalib.info,  Node: Resizing,  Next: Other functions,  Prev: Mouse,  Up: Top
+
+Resizing of display
+*******************
+
+   Some display devices (like unix terminals or X11 windows) allows
+runtime resizing.  This event is reported by AA_RESIZE. Then
+application is expected to call the function
+
+     int aa_resize(aa_context *C);
+
+   that changes the values in aa_context and resizes buffer. Function
+returns 0 if it failed. If everything went OK application must redraw
+the screen according to the new size because the original one has been
+lost. If your aplication handles these events at many various places or
+uses `aa_getkey' the catch of AA_RESIZE is more complicated and you
+should use the resize handler.
+
+     void aa_resizehandler(aa_context *C, void (*HANDLER) (aa_context *));
+
+   Then the resize handler is called by `aa_getevent' or `aa_getkey'
+functions when AA_RESIZE event appears. Some simple apps that don't
+rely on the display size and they redraw the whole screen after every
+event (some animations) should also use a bit tricky construction:
+
+     aa_resizehandler(aa_context *C, (void *)aa_resize);
+
+   This will cause automatical handling of resize events without any
+special stuff done by the application.
+
+
+File: aalib.info,  Node: Other functions,  Next: Designing new driver,  Prev: Resizing,  Up: Top
+
+Other functions
+***************
+
+     aa_renderparams *aa_getrenderparams(void);
+
+   This functions allocates a copy of aa_defrenderparams variable. It
+should be used by aplications that use more rendering parameters and
+that don't want to change aa_defrenderparams every time.
+
+     int aa_registerfont(struct aa_font *F);
+
+   This functions allows you to register a new font into font databaze
+(that is contained in `aa_fonts' array). This is often used by hardware
+drivers (that autodetect their fonts ...).
+
+     void aa_setsupported(aa_context *C, int SUPPORTED);
+
+   Allows you to change a supported variable (see Initialization) at
+runtime.
+
+     void aa_setfont(aa_context *C, struct aa_font *FONT);
+
+   Allows you to change a font used for approximation tables at runtime.
+
+     void aa_edit(aa_context *C, int X, int Y, int SIZE, char *S, int MAXSIZE);
+
+   A simple line editor: `X', `y', `size' express possitions of editor
+window, `s' - pointer to string you may want to edit and `maxsize'
+specifies the maximal size of input line.
+
+     struct aa_edit *aa_createedit(aa_context *C, int X, int Y,
+                                   int SIZE, char *S, int MAXSIZE);
+     void aa_editkey(struct aa_edit *E, int C);
+
+   Event handled version of an editor. `aa_createedit' fills in the
+struct `aa_edit' for the input line and `aa_editkey' processes an event
+for editor. Can be used by some "user friendly (huh:)" aplications....
+

@@ -1,0 +1,200 @@
+This is aalib.info, produced by makeinfo version 4.0 from aalib.texinfo.
+
+INFO-DIR-SECTION Libraries
+START-INFO-DIR-ENTRY
+* AA-lib: (aalib).              An ASCII-art graphics library
+END-INFO-DIR-ENTRY
+
+   (C) 1997 Jan Hubicka & Kamil Toman
+
+   Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+
+File: aalib.info,  Node: Index,  Prev: Reference,  Up: Top
+
+Index of functions, variables, types and constants
+**************************************************
+
+* Menu:
+
+* AA_ALL:                                Specifying hardware parameters.
+* aa_ansi_format:                        Initialization for image saving.
+* aa_attr:                               Flushing.
+* aa_attrs:                              aa_attrs.
+* aa_autoinit <1>:                       aa_autoinit.
+* aa_autoinit:                           Initialization as a normal graphics library.
+* aa_autoinitkbd <1>:                    aa_autoinitkbd.
+* aa_autoinitkbd:                        Initialization of keyboard.
+* aa_autoinitmouse <1>:                  aa_autoinitmouse.
+* aa_autoinitmouse:                      Mouse.
+* AA_BOLD:                               Flushing.
+* AA_BOLD_MASK:                          Specifying hardware parameters.
+* AA_BOLDFONT:                           Flushing.
+* AA_BOLDFONT_MASK:                      Specifying hardware parameters.
+* aa_close <1>:                          aa_close.
+* aa_close:                              Initialization.
+* aa_context:                            Initialization.
+* aa_createedit <1>:                     aa_createedit.
+* aa_createedit:                         Other functions.
+* aa_currentfont:                        aa_currentfont.
+* aa_defparams <1>:                      aa_defparams.
+* aa_defparams:                          Specifying hardware parameters.
+* aa_defrenderparams <1>:                aa_defrenderparams.
+* aa_defrenderparams:                    Rendering.
+* AA_DIM:                                Flushing.
+* AA_DIM_MASK:                           Specifying hardware parameters.
+* aa_displayrecomended:                  Recommending drivers.
+* aa_displayrecommended:                 aa_displayrecommended.
+* aa_dithernames:                        aa_dithernames.
+* aa_drivers:                            aa_drivers.
+* aa_edit <1>:                           aa_edit.
+* aa_edit:                               Other functions.
+* aa_editkey <1>:                        aa_editkey.
+* aa_editkey:                            Other functions.
+* AA_EIGHT:                              Specifying hardware parameters.
+* AA_EXTENDED:                           Specifying hardware parameters.
+* aa_fastrender <1>:                     aa_fastrender.
+* aa_fastrender:                         Rendering.
+* aa_flush:                              Flushing.
+* aa_fonts:                              aa_fonts.
+* aa_format:                             Initialization for image saving.
+* aa_formats:                            aa_formats.
+* aa_getevent <1>:                       aa_getevent.
+* aa_getevent:                           Getting events.
+* aa_getkey <1>:                         aa_getkey.
+* aa_getkey:                             Getting events.
+* aa_getmouse <1>:                       aa_getmouse.
+* aa_getmouse:                           Mouse.
+* aa_getrenderparams:                    Other functions.
+* aa_gotoxy <1>:                         aa_gotoxy.
+* aa_gotoxy:                             Flushing.
+* aa_hardware_params:                    Specifying hardware parameters.
+* aa_hardwareparams:                     Specifying hardware parameters.
+* aa_help <1>:                           aa_help.
+* aa_help:                               Parsing of command line options.
+* aa_hidecursor <1>:                     aa_hidecursor.
+* aa_hidecursor:                         Flushing.
+* aa_hidemouse <1>:                      aa_hidemouse.
+* aa_hidemouse:                          Mouse.
+* aa_hp2_format:                         Initialization for image saving.
+* aa_hp_format:                          Initialization for image saving.
+* aa_html_alt_format:                    Initialization for image saving.
+* aa_html_format:                        Initialization for image saving.
+* aa_image <1>:                          aa_image.
+* aa_image:                              Drawing image.
+* aa_imgheight <1>:                      aa_imgheight.
+* aa_imgheight:                          Drawing image.
+* aa_imgwidth <1>:                       aa_imgwidth.
+* aa_imgwidth:                           Drawing image.
+* aa_init <1>:                           aa_init.
+* aa_init:                               Initialization.
+* aa_initkbd <1>:                        aa_initkbd.
+* aa_initkbd:                            Initialization of keyboard.
+* aa_initmouse <1>:                      aa_initmouse.
+* aa_initmouse:                          Mouse.
+* aa_irc_format:                         Initialization for image saving.
+* aa_kbddrivers:                         aa_kbddrivers.
+* aa_kbdrecommended:                     aa_kbdrecommended.
+* aa_mmheight <1>:                       aa_mmheight.
+* aa_mmheight:                           Drawing image.
+* aa_mmwidth <1>:                        aa_mmwidth.
+* aa_mmwidth:                            Drawing image.
+* aa_more_format:                        Initialization for image saving.
+* AA_MOUSEALLMASK:                       Mouse.
+* aa_mousedrivers:                       aa_mousedrivers.
+* AA_MOUSEMOVEMASK:                      Mouse.
+* AA_MOUSEPRESSMASK:                     Mouse.
+* aa_mouserecommended:                   aa_mouserecommended.
+* aa_nhtml_format:                       Initialization for image saving.
+* AA_NONE:                               Getting events.
+* AA_NORMAL:                             Flushing.
+* AA_NORMAL_MASK:                        Specifying hardware parameters.
+* aa_palette:                            Drawing image.
+* aa_parseoptions <1>:                   aa_parseoptions.
+* aa_parseoptions:                       Parsing of command line options.
+* AA_PRESSEDMOVEMAKS:                    Mouse.
+* aa_printf:                             aa_printf.
+* aa_putpixel <1>:                       aa_putpixel.
+* aa_putpixel:                           Drawing image.
+* aa_puts <1>:                           aa_puts.
+* aa_puts:                               Flushing.
+* aa_recomendhidisplay:                  Recommending drivers.
+* aa_recomendhikbd:                      Initialization of keyboard.
+* aa_recomendhimouse:                    Mouse.
+* aa_recomendlowdisplay:                 Recommending drivers.
+* aa_recomendlowkbd:                     Initialization of keyboard.
+* aa_recomendlowmouse:                   Mouse.
+* aa_recommendhi:                        aa_recommendhi.
+* aa_recommendhidisplay:                 aa_recommendhidisplay.
+* aa_recommendhikbd:                     aa_recommendhikbd.
+* aa_recommendhimouse:                   aa_recommendhimouse.
+* aa_recommendlow:                       aa_recommendlow.
+* aa_recommendlowdisplay:                aa_recommendlowdisplay.
+* aa_recommendlowkbd:                    aa_recommendlowkbd.
+* aa_recommendlowmouse:                  aa_recommendlowmouse.
+* aa_registerfont <1>:                   aa_registerfont.
+* aa_registerfont:                       Other functions.
+* AA_RELEASE:                            Getting events.
+* aa_render <1>:                         aa_render.
+* aa_render:                             Rendering.
+* aa_renderpalette:                      Rendering.
+* aa_renderparams:                       Rendering.
+* aa_resize <1>:                         aa_resize.
+* aa_resize:                             Resizing.
+* AA_RESIZE:                             Resizing.
+* aa_resizehandler <1>:                  aa_resizehandler.
+* aa_resizehandler:                      Resizing.
+* AA_REVERSE:                            Flushing.
+* AA_REVERSE_MASK:                       Specifying hardware parameters.
+* aa_savedata:                           Initialization for image saving.
+* aa_scrheight:                          aa_scrheight.
+* aa_scrwidth:                           aa_scrwidth.
+* AA_SENDRELEASE:                        Initialization of keyboard.
+* aa_setfont <1>:                        aa_setfont.
+* aa_setfont:                            Other functions.
+* aa_setpalette:                         Drawing image.
+* aa_setsupported <1>:                   aa_setsupported.
+* aa_setsupported:                       Other functions.
+* aa_showcursor <1>:                     aa_showcursor.
+* aa_showcursor:                         Flushing.
+* aa_showmouse <1>:                      aa_showmouse.
+* aa_showmouse:                          Mouse.
+* AA_SPECIAL:                            Flushing.
+* aa_text <1>:                           aa_text.
+* aa_text:                               Flushing.
+* aa_text_format:                        Initialization for image saving.
+* aa_uninitkbd <1>:                      aa_uninitkbd.
+* aa_uninitkbd:                          Initialization of keyboard.
+* aa_uninitmouse <1>:                    aa_uninitmouse.
+* aa_uninitmouse:                        Mouse.
+* aa_zephyr_format:                      Initialization for image saving.
+* cursormode:                            Designing new driver.
+* flags:                                 Designing new driver.
+* flush:                                 Designing new driver.
+* font14:                                Specifying hardware parameters.
+* font16:                                Specifying hardware parameters.
+* font8:                                 Specifying hardware parameters.
+* font9:                                 Specifying hardware parameters.
+* fontgl:                                Specifying hardware parameters.
+* fontlinux:                             Specifying hardware parameters.
+* fontX13:                               Specifying hardware parameters.
+* fontX13B:                              Specifying hardware parameters.
+* fontX16:                               Specifying hardware parameters.
+* getkey:                                Designing new driver.
+* getmouse:                              Designing new driver.
+* getsize:                               Designing new driver.
+* gotoxy:                                Designing new driver.
+* init:                                  Designing new driver.
+* mem_d <1>:                             mem_d.
+* mem_d:                                 Initialization as an ascii art renderer.
+* name:                                  Designing new driver.
+* print:                                 Designing new driver.
+* save_d <1>:                            save_d.
+* save_d:                                Initialization for image saving.
+* setattr:                               Designing new driver.
+* shortname:                             Designing new driver.
+* uninit:                                Designing new driver.
+
+

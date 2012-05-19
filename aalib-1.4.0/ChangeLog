@@ -1,0 +1,88 @@
+Changes in version 1.3
+  o	Automake/libtools/autoconf updated.
+  o	Package restructured
+  o	Some bugfixes.
+  o	New "raw" keyboard driver for linux console alowing to detect key
+	releases.
+  o	Fixed -malign-double gcc binarry compatibility problem
+  o	Added const keywords to sources where possible.
+  o	AAlib.h documented
+  o	Lots of fixes from Debian maitainer Joey Hess installed
+  o	c2man generated manual pages added
+  o	Rest of changelog was lost in the disc crash....
+  o	Fixed X driver handling of refresh
+  o	Optimized X driver
+  o	X driver now allows setting font using AAFont environment variable
+  o	Added aalib-config
+
+Changes in version 1.1
+ Fixes:
+  o	Fixed help text
+  o	Fixed (I hope) problems with ncurses renamed to curses
+  o	Fixed release event in X11 driver
+  o	Fixed problems with -s ar options
+  o	Fixed problems with one pass linkers
+  o	X driver now handler non alphabed keys
+  o	Fixed GPM mouse cursor overflowing
+  o	Fixed compilation problem of aalinux w/o gpm libs
+ Cleanups:
+  o	Stderr driver merged with stdout. They share most of code now
+  o	All program names starts with aa to avoid colisions
+ Speedups:
+  o	Speedups in random dithering
+ New features:
+  o	New API call for hidding mouse cursor
+  o	New dos keyboard handler
+  o	DOS mouse driver
+  o	Documentation for writing new driver.
+  o	Added aa_printf
+  o	Driverdata mechanizm is now useable
+  o	X driver updated so it can now handle multiple windows
+  o	Now uses automake to generate Makefiles
+  o	AAsave extensions by Tim Newsome:
+  	o	AAsave now accepts %x %y in filename for pages
+		You have to use %% for %
+	o	Format now specifies conversion list - so conversions
+		like & -> &amp; should be done ellegantly
+	o	added . to extension name - should be usefull to specify
+		no extensions etc..
+	o	New formats: irc, zephyr and roff
+	Revisions of this patch by Jan Hubicka
+	o	AAsave now accepts %e for extension and %c for string
+		_%x_%y in case extensions is used (so you might simply
+		add %c%e after filename to get nice results)
+	o	extension field of structure returned back for backward
+		compatibility and since I think it is good place to hold
+		default extension for given type. It is not added by default
+		now, but at %e command in filename
+	o	Conversion list format changed from [500] array, since
+		it increased executable file size too much. Used pointer to 
+		pointer instead.
+	o	For one page formats pointer to FILE * structure should be
+		passed instad of filename
+	o	Added new formats into formats list
+	o	Changed conversions mechanizm a bit to avoid unfreed memory
+		areas.
+	o	Avoided conflict in case multiple aa_save filters are up
+		and in threads and some other problems
+  o	AA-lib is now under LGPL! 
+ API Uncompatibilities: hope last ones for long time :) - better to do them
+                        sooner than wait :)
+  o	X driver now uses default size (w/o asking) since it is not
+  	usual in X11. Use command line options instead :)
+  o	AA_getkey now returns just keypresses. Not releases anymore
+  	(was bug)
+  o	Removed update driver call since it is generaly unused.
+  o	stupid typo - MAKS renamed to MASK
+  o	You need to add %c%e at the end of name fileld for aa_save to
+  	get correct results (see comments bellow)
+  o	fontxx renamed to aa_fontxx to avoid confusion with other 
+  	symbols
+  o	context->driver->params moved into context->driverparams since
+  	one driver should handle multiple devices with different parameters
+	driverparams is taken as parameter into init
+	(broke compatibility with old aview. New aview is comming soon!)
+ New port:
+  o	OS2 port by Thomas A. K. Kjaer
+Changes in version 1.0
+  o	Initial version

@@ -1,0 +1,26 @@
+Begin3
+Title:          AA-lib - an ascii art library
+Version:        1.4
+Entered-date:   Apr 17 2001
+
+Description:    AA-lib is a low level gfx library just as many other libraries are.
+		The main difference is that AA-lib does not require graphics device. In
+		fact, there is no graphical output possible. AA-lib replaces those
+		old-fashioned output methods with powerful ascii-art renderer. Now my
+		linux boots with a nice penguin logo at secondary display (yes! Like
+		Win95 does:) AA-lib API is designed to be similar to other graphics
+		libraries. Learning a new API would be a piece of cake!
+
+Keywords:       X11 ascii-art text cool art ironing cooking fire library c GNU
+Author:         hubicka@freesoft.cz (Jan Hubicka)
+		toman@artax.karlin.mff.cuni.cz (Kamil Toman)
+Maintained-by:  hubicka@freesoft.cz (Jan Hubicka)
+
+Primary-site:   ftp.debian.org /pub/sourceforge/aa-project/
+		aalib-1.4.tar.gz
+
+Platform:       any UNIX with X11 with ansi-c compiler, Dos, stdio,
+		GNU operating system
+	
+Copying-policy: GNU LIBRARY GENERAL PUBLIC LICENSE
+End
