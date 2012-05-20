@@ -96,6 +96,15 @@ libwebp:
 		--host=$(TRIPLE) --prefix=$(INSTALL)/usr --enable-static --disable-shared
 	cd $(BUILD)/libwebp && $(ENV) make -j$(THREADS) && PATH=$(SDK)/usr/bin:$(PATH) make install
 
+xz:
+	rm -rf $(BUILD)/xz
+	mkdir -p $(BUILD)/xz
+	cd $(BUILD)/xz && $(ENV) $(SRCROOT)/xz-5.0.3/configure \
+		--host=$(TRIPLE) --prefix=$(INSTALL)/usr --enable-static --disable-shared \
+		--enable-encoders=lzma1,lzma2,delta --enable-decoders=lzma1,lzma2,delta --disable-assembler \
+		--disable-threads
+	cd $(BUILD)/xz && $(ENV) make -j$(THREADS) && PATH=$(SDK)/usr/bin:$(PATH) make install
+
 sdlttf:
 	rm -rf $(BUILD)/sdlttf
 	mkdir -p $(BUILD)/sdlttf
