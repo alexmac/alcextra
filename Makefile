@@ -20,6 +20,8 @@ all:
 	make readline
 	make libogg
 	make libvorbis
+	make libtiff
+	make libwebp
 	make freetype
 	make sdlttf
 	make sdlmixer
@@ -80,6 +82,20 @@ libvorbis:
 		--disable-docs --enable-static --disable-shared
 	cd $(BUILD)/libvorbis && $(ENV) make -j$(THREADS) && PATH=$(SDK)/usr/bin:$(PATH) make install
 
+libtiff:
+	rm -rf $(BUILD)/libtiff
+	mkdir -p $(BUILD)/libtiff
+	cd $(BUILD)/libtiff && $(ENV) $(SRCROOT)/tiff-4.0.1/configure \
+		--host=$(TRIPLE) --prefix=$(INSTALL)/usr --enable-static --disable-shared
+	cd $(BUILD)/libtiff && $(ENV) make -j$(THREADS) && PATH=$(SDK)/usr/bin:$(PATH) make install
+
+libwebp:
+	rm -rf $(BUILD)/libwebp
+	mkdir -p $(BUILD)/libwebp
+	cd $(BUILD)/libwebp && $(ENV) $(SRCROOT)/libwebp-0.1.3/configure \
+		--host=$(TRIPLE) --prefix=$(INSTALL)/usr --enable-static --disable-shared
+	cd $(BUILD)/libwebp && $(ENV) make -j$(THREADS) && PATH=$(SDK)/usr/bin:$(PATH) make install
+
 sdlttf:
 	rm -rf $(BUILD)/sdlttf
 	mkdir -p $(BUILD)/sdlttf
@@ -93,7 +109,7 @@ sdlttf:
 sdlimage:
 	rm -rf $(BUILD)/sdlimage
 	mkdir -p $(BUILD)/sdlimage
-	cd $(BUILD)/sdlimage && $(ENV) $(SRCROOT)/SDL_image-1.2.12/configure \
+	cd $(BUILD)/sdlimage && $(ENV) LIBPNG_CFLAGS="" LIBPNG_LIBS=-lpng $(SRCROOT)/SDL_image-1.2.12/configure \
 		--build=$(TRIPLE) --prefix=$(INSTALL)/usr --with-freetype-prefix=$(INSTALL)/usr/ \
 		--disable-sdltest --disable-dependency-tracking --enable-static --disable-shared --without-x
 	cd $(BUILD)/sdlimage && $(ENV) make -j$(THREADS) && make install
