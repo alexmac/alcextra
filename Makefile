@@ -21,7 +21,7 @@ all:
 	make libogg
 	make libvorbis
 	make libtiff
-	make libwebp
+	make xz
 	make freetype
 	make sdlttf
 	make sdlmixer
@@ -118,7 +118,7 @@ sdlttf:
 sdlimage:
 	rm -rf $(BUILD)/sdlimage
 	mkdir -p $(BUILD)/sdlimage
-	cd $(BUILD)/sdlimage && $(ENV) LIBPNG_CFLAGS="" LIBPNG_LIBS=-lpng $(SRCROOT)/SDL_image-1.2.12/configure \
+	cd $(BUILD)/sdlimage && $(ENV) LIBPNG_CFLAGS="-I$(SDK)/usr/include/libpng15/" LIBPNG_LIBS=-lpng $(SRCROOT)/SDL_image-1.2.12/configure \
 		--build=$(TRIPLE) --prefix=$(INSTALL)/usr --with-freetype-prefix=$(INSTALL)/usr/ \
 		--disable-sdltest --disable-dependency-tracking --enable-static --disable-shared --without-x
 	cd $(BUILD)/sdlimage && $(ENV) make -j$(THREADS) && make install
