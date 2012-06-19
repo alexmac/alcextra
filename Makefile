@@ -67,6 +67,20 @@ readline:
 		--build=$(TRIPLE) --prefix=$(INSTALL)/usr --with-curses --enable-static --disable-shared --without-shared
 	cd $(BUILD)/readline && $(ENV) make -j$(THREADS) && PATH=$(SDK)/usr/bin:$(PATH) make install-static
 
+libpng:
+	rm -rf $(BUILD)/libpng
+	mkdir -p $(BUILD)/libpng
+	cd $(BUILD)/libpng && $(ENV) $(SRCROOT)/libpng-1.5.10/configure \
+		--host=$(TRIPLE) --prefix=$(INSTALL)/usr --enable-static --disable-shared
+	cd $(BUILD)/libpng && $(ENV) make -j$(THREADS) && PATH=$(SDK)/usr/bin:$(PATH) make install
+
+jpeg:
+	rm -rf $(BUILD)/jpeg
+	mkdir -p $(BUILD)/jpeg
+	cd $(BUILD)/jpeg && $(ENV) $(SRCROOT)/jpeg-8d/configure \
+		--host=$(TRIPLE) --prefix=$(INSTALL)/usr --enable-static --disable-shared
+	cd $(BUILD)/jpeg && $(ENV) make -j$(THREADS) && PATH=$(SDK)/usr/bin:$(PATH) make install
+
 libogg:
 	rm -rf $(BUILD)/libogg
 	mkdir -p $(BUILD)/libogg
