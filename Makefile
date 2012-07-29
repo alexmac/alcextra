@@ -21,17 +21,17 @@ all:
 	make libogg
 	make libpng
 	make libtiff
+	make giflib
 	make jpeg
 	make xz
 	make libvorbis
-	make libwebp
+	#make libwebp
 	make aalib
 	make freetype
 	make sdlttf
 	make sdlmixer
 	make sdlimage
 	make physfs
-	make aalib
 
 	rm -f $(INSTALL)/usr/lib/*.la
 
@@ -77,6 +77,13 @@ libpng:
 	cd $(BUILD)/libpng && $(ENV) $(SRCROOT)/libpng-1.5.10/configure \
 		--host=$(TRIPLE) --prefix=$(INSTALL)/usr --enable-static --disable-shared
 	cd $(BUILD)/libpng && $(ENV) make -j$(THREADS) && PATH=$(ALCHEMY)/usr/bin:$(PATH) make install
+
+giflib:
+	rm -rf $(BUILD)/giflib
+	mkdir -p $(BUILD)/giflib
+	cd $(BUILD)/giflib && $(ENV) $(SRCROOT)/giflib-5.0.0/configure \
+		--host=$(TRIPLE) --prefix=$(INSTALL)/usr --enable-static --disable-shared
+	cd $(BUILD)/giflib && $(ENV) make -j$(THREADS) && PATH=$(ALCHEMY)/usr/bin:$(PATH) make install
 
 jpeg:
 	rm -rf $(BUILD)/jpeg
