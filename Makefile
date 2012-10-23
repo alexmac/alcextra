@@ -1,19 +1,19 @@
-ALCHEMY=/path/to/alchemy/sdk
+FLASCC=/path/to/FLASCC/sdk
 BUILD=$(PWD)/build
 INSTALL=$(PWD)/install
 SRCROOT=$(PWD)
 THREADS=`sysctl -n hw.ncpu`
 TRIPLE=avm2-unknown-freebsd8
-PKG_CONFIG_PATH=$(ALCHEMY)/usr/lib/pkgconfig:$(INSTALL)/usr/lib/pkgconfig
+PKG_CONFIG_PATH=$(FLASCC)/usr/lib/pkgconfig:$(INSTALL)/usr/lib/pkgconfig
 
-ENV=PATH=$(ALCHEMY)/usr/bin:$(INSTALL)/usr/bin:$(PATH) PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) CC=gcc CXX=g++ CFLAGS=-O4 CXXFLAGS=-O4
+ENV=PATH=$(FLASCC)/usr/bin:$(INSTALL)/usr/bin:$(PATH) PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) CC=gcc CXX=g++ CFLAGS=-O4 CXXFLAGS=-O4
 
 all:
 	mkdir -p $(BUILD)
 	mkdir -p $(INSTALL)
 
-	@if [ -d $(ALCHEMY)/usr/bin ] ; then true ; \
-		else echo "Couldn't locate Alchemy sdk directory, please invoke make with \"make ALCHEMY=/path/to/alchemy/sdk ...\"" ; exit 1 ; \
+	@if [ -d $(FLASCC)/usr/bin ] ; then true ; \
+		else echo "Couldn't locate FLASCC sdk directory, please invoke make with \"make FLASCC=/path/to/FLASCC/sdk ...\"" ; exit 1 ; \
 	fi	
 	
 	make ncurses
@@ -41,20 +41,21 @@ clean:
 	rm -rf $(BUILD)
 
 physfs:
-	rm -rf $(BUILD)/physfs
-	mkdir -p $(BUILD)/physfs
-	cd $(BUILD)/physfs && $(ENV) cmake -G "Unix Makefiles" -DCMAKE_PREFIX_PATH=$(ALCHEMY)/ $(SRCROOT)/physfs \
-		-DCMAKE_INSTALL_PREFIX=$(INSTALL)/usr -DPHYSFS_BUILD_TEST=0 -DPHYSFS_HAVE_THREAD_SUPPORT=0 \
-		-DPHYSFS_HAVE_CDROM_SUPPORT=0 -DPHYSFS_BUILD_STATIC=1 -DPHYSFS_BUILD_SHARED=0 -DPHYSFS_BUILD_PERL=0 \
-		-DPHYSFS_BUILD_RUBY=0 -DOTHER_LDFLAGS=-lz -DPHYSFS_NO_64BIT_SUPPORT=1
-	cd $(BUILD)/physfs && $(ENV) make -j$(THREADS) && PATH=$(ALCHEMY)/usr/bin:$(PATH) make install
+	#rm -rf $(BUILD)/physfs
+	#mkdir -p $(BUILD)/physfs
+	#cd $(BUILD)/physfs && $(ENV) cmake -G "Unix Makefiles" -DCMAKE_PREFIX_PATH=$(FLASCC)/ $(SRCROOT)/physfs \
+	#	-DCMAKE_INSTALL_PREFIX=$(INSTALL)/usr -DPHYSFS_BUILD_TEST=0 -DPHYSFS_HAVE_THREAD_SUPPORT=0 \
+	#	-DPHYSFS_HAVE_CDROM_SUPPORT=0 -DPHYSFS_BUILD_STATIC=1 -DPHYSFS_BUILD_SHARED=0 -DPHYSFS_BUILD_PERL=0 \
+	#	-DPHYSFS_BUILD_RUBY=0 -DOTHER_LDFLAGS=-lz -DPHYSFS_NO_64BIT_SUPPORT=1 -DCMAKE_INCLUDE_PATH="$(INSTALL)/usr/include" \
+	#	-DCMAKE_LIBRARY_PATH="$(INSTALL)/usr/lib:$(FLASCC)/usr/lib"
+	cd $(BUILD)/physfs && $(ENV) make -j$(THREADS) && PATH=$(FLASCC)/usr/bin:$(PATH) make install
 
 aalib:
 	rm -rf $(BUILD)/aalib
 	mkdir -p $(BUILD)/aalib
 	cd $(BUILD)/aalib && $(ENV) $(SRCROOT)/aalib-1.4.0/configure --host=$(TRIPLE) --prefix=$(INSTALL)/usr \
 		--enable-static --disable-shared --without-x --with-curses-driver=no
-	cd $(BUILD)/aalib && $(ENV) make -j$(THREADS) && PATH=$(ALCHEMY)/usr/bin:$(PATH) make install
+	cd $(BUILD)/aalib && $(ENV) make -j$(THREADS) && PATH=$(FLASCC)/usr/bin:$(PATH) make install
 
 ncurses:
 	rm -rf $(BUILD)/ncurses
@@ -62,42 +63,42 @@ ncurses:
 	cd $(BUILD)/ncurses && $(ENV) $(SRCROOT)/ncurses-5.9/configure --host=$(TRIPLE) --prefix=$(INSTALL)/usr \
 		--enable-static --disable-shared --disable-pthread --without-shared --without-debug --without-tests \
 		--without-progs --without-dlsym 
-	cd $(BUILD)/ncurses && $(ENV) make -j$(THREADS) && PATH=$(ALCHEMY)/usr/bin:$(PATH) make install
+	cd $(BUILD)/ncurses && $(ENV) make -j$(THREADS) && PATH=$(FLASCC)/usr/bin:$(PATH) make install
 
 readline:
 	rm -rf $(BUILD)/readline
 	mkdir -p $(BUILD)/readline
 	cd $(BUILD)/readline && $(ENV) $(SRCROOT)/readline-6.2/configure \
 		--build=$(TRIPLE) --prefix=$(INSTALL)/usr --with-curses --enable-static --disable-shared --without-shared
-	cd $(BUILD)/readline && $(ENV) make -j$(THREADS) && PATH=$(ALCHEMY)/usr/bin:$(PATH) make install-static
+	cd $(BUILD)/readline && $(ENV) make -j$(THREADS) && PATH=$(FLASCC)/usr/bin:$(PATH) make install-static
 
 libpng:
 	rm -rf $(BUILD)/libpng
 	mkdir -p $(BUILD)/libpng
 	cd $(BUILD)/libpng && $(ENV) $(SRCROOT)/libpng-1.5.10/configure \
 		--host=$(TRIPLE) --prefix=$(INSTALL)/usr --enable-static --disable-shared
-	cd $(BUILD)/libpng && $(ENV) make -j$(THREADS) && PATH=$(ALCHEMY)/usr/bin:$(PATH) make install
+	cd $(BUILD)/libpng && $(ENV) make -j$(THREADS) && PATH=$(FLASCC)/usr/bin:$(PATH) make install
 
 giflib:
 	rm -rf $(BUILD)/giflib
 	mkdir -p $(BUILD)/giflib
 	cd $(BUILD)/giflib && $(ENV) $(SRCROOT)/giflib-5.0.0/configure \
 		--host=$(TRIPLE) --prefix=$(INSTALL)/usr --enable-static --disable-shared
-	cd $(BUILD)/giflib && $(ENV) make -j$(THREADS) && PATH=$(ALCHEMY)/usr/bin:$(PATH) make install
+	cd $(BUILD)/giflib && $(ENV) make -j$(THREADS) && PATH=$(FLASCC)/usr/bin:$(PATH) make install
 
 jpeg:
 	rm -rf $(BUILD)/jpeg
 	mkdir -p $(BUILD)/jpeg
 	cd $(BUILD)/jpeg && $(ENV) $(SRCROOT)/jpeg-8d/configure \
 		--host=$(TRIPLE) --prefix=$(INSTALL)/usr --enable-static --disable-shared
-	cd $(BUILD)/jpeg && $(ENV) make -j$(THREADS) && PATH=$(ALCHEMY)/usr/bin:$(PATH) make install
+	cd $(BUILD)/jpeg && $(ENV) make -j$(THREADS) && PATH=$(FLASCC)/usr/bin:$(PATH) make install
 
 libogg:
 	rm -rf $(BUILD)/libogg
 	mkdir -p $(BUILD)/libogg
 	cd $(BUILD)/libogg && $(ENV) $(SRCROOT)/libogg-1.3.0/configure \
 		--host=$(TRIPLE) --prefix=$(INSTALL)/usr --enable-static --disable-shared
-	cd $(BUILD)/libogg && $(ENV) make -j$(THREADS) && PATH=$(ALCHEMY)/usr/bin:$(PATH) make install
+	cd $(BUILD)/libogg && $(ENV) make -j$(THREADS) && PATH=$(FLASCC)/usr/bin:$(PATH) make install
 
 libvorbis:
 	rm -rf $(BUILD)/libvorbis
@@ -112,14 +113,14 @@ libtiff:
 	mkdir -p $(BUILD)/libtiff
 	cd $(BUILD)/libtiff && $(ENV) $(SRCROOT)/tiff-4.0.1/configure \
 		--host=$(TRIPLE) --prefix=$(INSTALL)/usr --enable-static --disable-shared
-	cd $(BUILD)/libtiff && $(ENV) make -j$(THREADS) && PATH=$(ALCHEMY)/usr/bin:$(PATH) make install
+	cd $(BUILD)/libtiff && $(ENV) make -j$(THREADS) && PATH=$(FLASCC)/usr/bin:$(PATH) make install
 
 libwebp:
 	rm -rf $(BUILD)/libwebp
 	mkdir -p $(BUILD)/libwebp
 	cd $(BUILD)/libwebp && $(ENV) $(SRCROOT)/libwebp-0.1.3/configure \
 		--host=$(TRIPLE) --prefix=$(INSTALL)/usr --enable-static --disable-shared
-	cd $(BUILD)/libwebp && $(ENV) make -j$(THREADS) && PATH=$(ALCHEMY)/usr/bin:$(PATH) make install
+	cd $(BUILD)/libwebp && $(ENV) make -j$(THREADS) && PATH=$(FLASCC)/usr/bin:$(PATH) make install
 
 xz:
 	rm -rf $(BUILD)/xz
@@ -128,7 +129,7 @@ xz:
 		--host=$(TRIPLE) --prefix=$(INSTALL)/usr --enable-static --disable-shared \
 		--enable-encoders=lzma1,lzma2,delta --enable-decoders=lzma1,lzma2,delta --disable-assembler \
 		--disable-threads
-	cd $(BUILD)/xz && $(ENV) make -j$(THREADS) && PATH=$(ALCHEMY)/usr/bin:$(PATH) make install
+	cd $(BUILD)/xz && $(ENV) make -j$(THREADS) && PATH=$(FLASCC)/usr/bin:$(PATH) make install
 
 sdlttf:
 	rm -rf $(BUILD)/sdlttf
@@ -138,17 +139,17 @@ sdlttf:
 		--disable-sdltest --disable-dependency-tracking --enable-static --disable-shared --without-x
 	cd $(BUILD)/sdlttf && $(ENV) make -j$(THREADS) && make install
 	rm -f $(INSTALL)/usr/lib/libSDL_ttf.a
-	$(ALCHEMY)/usr/bin/ar crus $(INSTALL)/usr/lib/libSDL_ttf.a $(BUILD)/sdlttf/SDL_ttf.o
+	$(FLASCC)/usr/bin/ar crus $(INSTALL)/usr/lib/libSDL_ttf.a $(BUILD)/sdlttf/SDL_ttf.o
 
 sdlimage:
 	rm -rf $(BUILD)/sdlimage
 	mkdir -p $(BUILD)/sdlimage
-	cd $(BUILD)/sdlimage && $(ENV) LIBPNG_CFLAGS="-I$(ALCHEMY)/usr/include/libpng15/" LIBPNG_LIBS=-lpng $(SRCROOT)/SDL_image-1.2.12/configure \
+	cd $(BUILD)/sdlimage && $(ENV) LIBPNG_CFLAGS="-I$(FLASCC)/usr/include/libpng15/" LIBPNG_LIBS=-lpng $(SRCROOT)/SDL_image-1.2.12/configure \
 		--build=$(TRIPLE) --prefix=$(INSTALL)/usr --with-freetype-prefix=$(INSTALL)/usr/ \
 		--disable-sdltest --disable-dependency-tracking --enable-static --disable-shared --without-x
 	cd $(BUILD)/sdlimage && $(ENV) make -j$(THREADS) && make install
 	rm -f $(INSTALL)/usr/lib/libSDL_image.a
-	$(ALCHEMY)/usr/bin/ar crus $(INSTALL)/usr/lib/libSDL_image.a $(BUILD)/sdlimage/*.o
+	$(FLASCC)/usr/bin/ar crus $(INSTALL)/usr/lib/libSDL_image.a $(BUILD)/sdlimage/*.o
 
 sdlmixer:
 	rm -rf $(BUILD)/sdlmixer
@@ -158,11 +159,17 @@ sdlmixer:
 		--disable-sdltest --disable-dependency-tracking --enable-static --disable-shared --without-x
 	cd $(BUILD)/sdlmixer && $(ENV) make -j$(THREADS) && make install
 	rm -f $(INSTALL)/usr/lib/libSDL_mixer.a
-	$(ALCHEMY)/usr/bin/ar crus $(INSTALL)/usr/lib/libSDL_mixer.a $(BUILD)/sdlmixer/build/*.o
+	$(FLASCC)/usr/bin/ar crus $(INSTALL)/usr/lib/libSDL_mixer.a $(BUILD)/sdlmixer/build/*.o
 
 freetype:
 	rm -rf $(BUILD)/freetype
 	mkdir -p $(BUILD)/freetype
 	cd $(BUILD)/freetype && $(ENV) $(SRCROOT)/freetype-2.4.8/configure --build=$(TRIPLE) \
 		--without-bzip2 --without-ats --without-old-mac-fonts --disable-mmap --enable-static --disable-shared --prefix=$(INSTALL)/usr
-	cd $(BUILD)/freetype && $(ENV) make -j$(THREADS) && PATH=$(ALCHEMY)/usr/bin:$(PATH) make install
+	cd $(BUILD)/freetype && $(ENV) make -j$(THREADS) && PATH=$(FLASCC)/usr/bin:$(PATH) make install
+
+eigen:
+	rm -rf $(BUILD)/eigen
+	mkdir -p $(BUILD)/eigen
+	cd $(BUILD)/eigen && $(ENV) cmake $(SRCROOT)/eigen-3.1.1 
+	cd $(BUILD)/eigen && $(ENV) make -j$(THREADS) && PATH=$(FLASCC)/usr/bin:$(PATH) make install

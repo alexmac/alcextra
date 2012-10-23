@@ -9,13 +9,12 @@
  *  verbatim into a closed-source project, exploiting it commercially, and
  *  removing any trace of my name from the source (although I hope you won't
  *  do that). I welcome enhancements and corrections to this file, but I do
- *  not require you to send me patches if you make changes. This code has
- *  NO WARRANTY.
+ *  not require you to send me patches if you make changes.
  *
- * Unless otherwise stated, the rest of PhysicsFS falls under the zlib license.
- *  Please see LICENSE.txt in the root of the source tree.
+ * Unless otherwise stated, the rest of PhysicsFS falls under the GNU Lesser
+ *  General Public License: http://www.gnu.org/licenses/lgpl.txt
  *
- * SDL falls under the LGPL license. You can get SDL at http://www.libsdl.org/
+ * SDL falls under the LGPL, too. You can get SDL at http://www.libsdl.org/
  *
  *  This file was written by Ryan C. Gordon. (icculus@icculus.org).
  */
@@ -76,7 +75,7 @@ __EXPORT__ SDL_RWops *PHYSFSRWOPS_openAppend(const char *fname);
  *  @return A valid SDL_RWops structure on success, NULL on error. Specifics
  *           of the error can be gleaned from PHYSFS_getLastError().
  */
-__EXPORT__ SDL_RWops *PHYSFSRWOPS_makeRWops(PHYSFS_File *handle);
+__EXPORT__ SDL_RWops *PHYSFSRWOPS_makeRWops(PHYSFS_file *handle);
 
 #ifdef __cplusplus
 }
