@@ -10771,7 +10771,7 @@ fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_png_main" >&5
 $as_echo "$ac_cv_lib_png_main" >&6; }
 if test "x$ac_cv_lib_png_main" = x""yes; then :
-  PNG_LIBS="$PNG_LIBS -lpng"
+  PNG_LIBS="$PNG_LIBS -lpng -lz"
                 PNG_INCLUDES="$PNG_INCLUDES -DWEBP_HAVE_PNG"
 
 $as_echo "#define WEBP_HAVE_PNG 1" >>confdefs.h
