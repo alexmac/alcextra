@@ -53,6 +53,17 @@ protobuf:
 	cd "$(BUILD)/protobuf" && CC=gcc CFLAGS="-O4" CXXFLAGS="-O4" PATH="$(FLASCC)/usr/bin":"$(PATH)" make -j6
 	cd "$(BUILD)/protobuf" && CC=gcc CFLAGS="-O4" CXXFLAGS="-O4" PATH="$(FLASCC)/usr/bin":"$(PATH)" make install
 
+protobufexample:
+	# compile the tutorial (https://developers.google.com/protocol-buffers/docs/cpptutorial)
+	mkdir -p "$(BUILD)/protobufexample"
+	"$(SRCROOT)/install/usr/bin/protoc" -I="$(SRCROOT)/protobuf-2.4.1/flash/" --cpp_out="$(BUILD)/protobufexample" "$(SRCROOT)/protobuf-2.4.1/flash/example.proto"
+	"$(FLASCC)/usr/bin/g++" \
+		-emit-swf -O4 \
+		-o "$(BUILD)/protobufexample/example.swf" \
+		-I"$(INSTALL)/usr/include" -I"$(BUILD)/protobufexample" \
+		"$(BUILD)/protobufexample/example.pb.cc" "$(SRCROOT)/protobuf-2.4.1/flash/example.cpp" \
+		-L"$(INSTALL)/usr/lib" -Wl,--start-group -lprotoc -lprotobuf -Wl,--end-group \
+
 physfs:
 	rm -rf "$(BUILD)/physfs"
 	mkdir -p "$(BUILD)/physfs"
