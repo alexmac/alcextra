@@ -44,6 +44,15 @@ all:
 clean:
 	rm -rf "$(BUILD)"
 
+
+protobuf:
+	rm -rf "$(BUILD)/protobuf"
+	mkdir -p "$(BUILD)/protobuf"
+	cd "$(BUILD)/protobuf" && CC=gcc CFLAGS="-O4" CXXFLAGS="-O4" PATH="$(FLASCC)/usr/bin":"$(PATH)" "$(SRCROOT)/protobuf-2.4.1/configure" \
+		--prefix="$(INSTALL)/usr" --disable-shared
+	cd "$(BUILD)/protobuf" && CC=gcc CFLAGS="-O4" CXXFLAGS="-O4" PATH="$(FLASCC)/usr/bin":"$(PATH)" make -j6
+	cd "$(BUILD)/protobuf" && CC=gcc CFLAGS="-O4" CXXFLAGS="-O4" PATH="$(FLASCC)/usr/bin":"$(PATH)" make install
+
 physfs:
 	rm -rf "$(BUILD)/physfs"
 	mkdir -p "$(BUILD)/physfs"
