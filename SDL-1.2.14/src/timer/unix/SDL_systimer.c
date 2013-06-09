@@ -46,6 +46,10 @@
 #include <pth.h>
 #endif
 
+#ifdef __AVM2__
+#include <AS3/AS3.h>
+#endif
+
 #if SDL_THREADS_DISABLED
 #define USE_ITIMER
 #endif
@@ -70,6 +74,13 @@ void SDL_StartTicks(void)
 
 Uint32 SDL_GetTicks (void)
 {
+
+#ifdef __AVM2__
+	int getTimerTicks;
+	inline_as3("import flash.utils.getTimer; %0 = getTimer();" : "=r"(getTimerTicks));
+	return getTimerTicks;
+#endif
+
 #if HAVE_CLOCK_GETTIME
 	Uint32 ticks;
 	struct timespec now;

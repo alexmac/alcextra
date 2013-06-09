@@ -45,7 +45,7 @@ static void SDL_HandleSIG(int sig)
 /* Public functions */
 int SDL_QuitInit(void)
 {
-#ifdef HAVE_SIGNAL_H
+#if  0 // def HAVE_SIGNAL_H // TODO fixme
 	void (*ohandler)(int);
 
 	/* Both SIGINT and SIGTERM are translated into quit interrupts */
@@ -62,7 +62,7 @@ int SDL_QuitInit(void)
 }
 void SDL_QuitQuit(void)
 {
-#ifdef HAVE_SIGNAL_H
+#if  0 // def HAVE_SIGNAL_H // TODO fixme
 	void (*ohandler)(int);
 
 	ohandler = signal(SIGINT, SIG_DFL);

@@ -85,10 +85,11 @@ static int VGL_Available(void)
 			console = -1;
 		}
 	}
-	if (geteuid() != 0 && console == -1)
-		return 0;
+	//TODO: should we pretend to be root by default?
+	//if (geteuid() != 0 && console == -1)
+	//	return 0;
 
-	modes = VGLListModes(8, V_INFO_MM_DIRECT | V_INFO_MM_PACKED);
+	modes = VGLListModes(-1, V_INFO_MM_DIRECT | V_INFO_MM_PACKED);
 	hires_available = 0;
 	for (i = 0; modes[i] != NULL; i++) {
 		if ((modes[i]->ModeInfo.Xsize > 320) &&
@@ -433,9 +434,23 @@ static int VGL_FlipHWSurface(_THIS, SDL_Surface *surface)
 	return 0;
 }
 
+#ifdef __AVM2__
+extern void *__avm2_stdin_mapping;
+extern int *__avm2_vgl_argb_buffer;
+extern int __avm2_vgl_fb_w, __avm2_vgl_fb_h, __avm2_vgl_fb_bpp;
+extern void convertVGLBuffertoARGB(byte *src, int *dst, int w, int h);
+#endif
+
 static void VGL_DirectUpdate(_THIS, int numrects, SDL_Rect *rects)
 {
-	return;
+  #ifdef __AVM2__
+	if(__avm2_vgl_fb_bpp != 8)
+		memcpy(__avm2_vgl_argb_buffer, __avm2_stdin_mapping, __avm2_vgl_fb_w*__avm2_vgl_fb_h*(__avm2_vgl_fb_bpp/8));
+	else
+  		convertVGLBuffertoARGB(__avm2_stdin_mapping, __avm2_vgl_argb_buffer, VGLCurMode->ModeInfo.Xsize, VGLCurMode->ModeInfo.Ysize);
+  __avm2_vgl_fb_w = VGLCurMode->ModeInfo.Xsize;
+  __avm2_vgl_fb_h = VGLCurMode->ModeInfo.Ysize;
+  #endif
 }
 
 static void VGL_BankedUpdate(_THIS, int numrects, SDL_Rect *rects)
@@ -449,9 +464,9 @@ int VGL_SetColors(_THIS, int firstcolor, int ncolors, SDL_Color *colors)
 
 	for(i = 0; i < ncolors; i++) {
 	        VGLSetPaletteIndex(firstcolor + i,
-			       colors[i].r>>2,
-			       colors[i].g>>2,
-			       colors[i].b>>2);
+			       colors[i].r/*>>2*/, // AVM TODO: huh?
+			       colors[i].g/*>>2*/,
+			       colors[i].b/*>>2*/);
 	}
 	return 1;
 }

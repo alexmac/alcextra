@@ -34,6 +34,8 @@
 #include "../events/SDL_sysevents.h"
 #include "../events/SDL_events_c.h"
 
+#include <AS3/AS3.h>
+
 /* These are static for our cursor handling code */
 volatile int SDL_cursorstate = CURSOR_VISIBLE;
 SDL_Cursor *SDL_cursor = NULL;
@@ -265,6 +267,11 @@ void SDL_FreeCursor (SDL_Cursor *cursor)
 int SDL_ShowCursor (int toggle)
 {
 	int showing;
+
+	if(toggle == SDL_ENABLE)
+		inline_as3("import flash.ui.Mouse; Mouse.show();");
+	else
+		inline_as3("import flash.ui.Mouse; Mouse.hide();");
 
 	showing = (SDL_cursorstate & CURSOR_VISIBLE);
 	if ( toggle >= 0 ) {

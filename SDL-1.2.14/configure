@@ -29970,7 +29970,7 @@ _ACEOF
             *-*-aix*)           ARCH=aix ;;
             *-*-osf*)           ARCH=osf ;;
         esac
-        CheckVisibilityHidden
+        # !AVM2! CheckVisibilityHidden
         CheckDummyVideo
         CheckDiskAudio
         CheckDummyAudio
@@ -30408,7 +30408,7 @@ _ACEOF
         # use here or in sdl-config. Hence we reset it.
         EXTRA_LDFLAGS=""
 
-        CheckVisibilityHidden
+        # !AVM2! CheckVisibilityHidden
         CheckDummyVideo
         CheckDiskAudio
         CheckDummyAudio

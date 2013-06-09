@@ -155,6 +155,25 @@ libgmp:
 		--host=$(TRIPLE) --prefix="$(INSTALL)/usr" --enable-static --disable-shared
 	cd "$(BUILD)/libgmp" && $(ENV) make -j$(THREADS) && PATH="$(FLASCC)/usr/bin":"$(PATH)" make install
 
+libsdl:
+	# pulled from elsewhere, so won't work without making this conform to the paths used in the rest of this repo
+	# buyer beware!
+	#$(ENV) $(SRCROOT)/SDL-1.2.14/configure \
+	#	--host=$(TRIPLE) --prefix=$(SDK)/usr --disable-pthreads --disable-alsa --disable-video-x11 \
+	#	--disable-cdrom --disable-loadso --disable-assembly --disable-esd --disable-arts --disable-nas \
+	#	--disable-nasm --disable-altivec --disable-dga --disable-screensaver --disable-sdl-dlopen \
+	#	--disable-directx --enable-joystick --enable-video-vgl --enable-static --disable-shared
+	#perl -p -i -e 's~$(SRCROOT)~FLASCC_SRC_DIR~g' `grep -ril $(SRCROOT) cached_build/`
+	#rm $(SRCROOT)/cached_build/libsdl/config.status
+
+	#perl -p -i -e 's~FLASCC_SRC_DIR~$(SRCROOT)~g' `grep -ril FLASCC_SRC_DIR $(BUILD)/libsdl/`
+
+	#cd $(BUILD)/libsdl && PATH='$(SDK)/usr/bin:$(PATH)' make -j$(THREADS)
+	#cd $(BUILD)/libsdl && PATH='$(SDK)/usr/bin:$(PATH)' make install
+	#make libsdl-install
+	#rm $(SDK)/usr/include/SDL/SDL_opengl.h
+
+
 sdlttf:
 	rm -rf "$(BUILD)/sdlttf"
 	mkdir -p "$(BUILD)/sdlttf"

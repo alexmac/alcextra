@@ -681,8 +681,9 @@ SDL_Surface * SDL_SetVideoMode (int width, int height, int bpp, Uint32 flags)
 
 	    /* Sam - If we asked for OpenGL mode, and didn't get it, fail */
 	    if ( is_opengl && !(mode->flags & SDL_OPENGL) ) {
-		mode = NULL;
-		SDL_SetError("OpenGL not available");
+//		mode = NULL;
+//		SDL_SetError("OpenGL not available");
+			mode->flags &= SDL_OPENGL; // We always have openGL in flash muhahahah
 	    }
 	}
 	/*

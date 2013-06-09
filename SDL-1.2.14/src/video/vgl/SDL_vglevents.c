@@ -103,7 +103,10 @@ static void handle_mouse(_THIS)
 	int button_state, state_changed, state;
 	int i;
 
-	ioctl(0, CONS_MOUSECTL, &mouseinfo);
+	if(VGLUseUnsynchronizedIoctl)
+		vglttyioctl(0, CONS_MOUSECTL, &mouseinfo, NULL);
+	else
+		ioctl(0, CONS_MOUSECTL, &mouseinfo);
 	x = mouseinfo.u.data.x;
 	y = mouseinfo.u.data.y;
 	buttons = mouseinfo.u.data.buttons;
@@ -129,9 +132,14 @@ static void handle_mouse(_THIS)
 	}
 }
 	
+int VGL_disable_pump_events = 0;
 
 void VGL_PumpEvents(_THIS)
 {
+	if(VGL_disable_pump_events) {
+		return;
+	}
+
 	do {
 		posted = 0;
 		handle_keyboard(this);
@@ -263,6 +271,7 @@ void VGL_InitOSKeymap(_THIS)
 	keymap[SCANCODE_RIGHTWIN] = SDLK_RSUPER;
 	keymap[SCANCODE_LEFTWIN] = SDLK_LSUPER;
 	keymap[127] = SDLK_MENU;
+	keymap[0] = SDLK_ESCAPE;
 }
 
 static SDL_keysym *TranslateKey(int scancode, SDL_keysym *keysym)

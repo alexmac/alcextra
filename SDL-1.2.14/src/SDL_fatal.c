@@ -58,6 +58,8 @@ static int SDL_fatal_signals[] = {
 
 void SDL_InstallParachute(void)
 {
+    return; // TODO: fixme when sigaction works
+    
 	/* Set a handler for any fatal signal not already handled */
 	int i;
 #ifdef HAVE_SIGACTION
