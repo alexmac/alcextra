@@ -1,4 +1,4 @@
-FLASCC=/path/to/FLASCC/sdk
+sFLASCC=/path/to/FLASCC/sdk
 BUILD="$(PWD)/build"
 INSTALL="$(PWD)/install"
 SRCROOT="$(PWD)"
@@ -156,6 +156,18 @@ libgmp:
 	cd "$(BUILD)/libgmp" && $(ENV) make -j$(THREADS) && PATH="$(FLASCC)/usr/bin":"$(PATH)" make install
 
 libsdl:
+	rm -rf "$(BUILD)/sdl"
+	mkdir -p "$(BUILD)/sdl"
+	cd "$(BUILD)/sdl" && $(ENV) $(SRCROOT)/SDL-1.2.14/configure \
+		--host=$(TRIPLE) --prefix="$(INSTALL)/usr" --disable-pthreads --disable-alsa --disable-video-x11 \
+		--disable-cdrom --disable-loadso --disable-assembly --disable-esd --disable-arts --disable-nas \
+		--disable-nasm --disable-altivec --disable-dga --disable-screensaver --disable-sdl-dlopen \
+		--disable-directx --enable-joystick --enable-video-vgl --enable-static --disable-shared
+	cd "$(BUILD)/sdl" && $(ENV) make -j$(THREADS) && make install
+	rm -f "$(INSTALL)/usr/lib/libSDL.a"
+	"$(FLASCC)/usr/bin/ar" crus "$(INSTALL)/usr/lib/libSDL.a" "$(BUILD)"/sdl/build/*.o
+	rm $(INSTALL)/usr/include/SDL/SDL_opengl.h
+
 	# pulled from elsewhere, so won't work without making this conform to the paths used in the rest of this repo
 	# buyer beware!
 	#$(ENV) $(SRCROOT)/SDL-1.2.14/configure \
