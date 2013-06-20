@@ -1,4 +1,4 @@
-sFLASCC=/path/to/FLASCC/sdk
+FLASCC=/path/to/FLASCC/sdk
 BUILD="$(PWD)/build"
 INSTALL="$(PWD)/install"
 SRCROOT="$(PWD)"
